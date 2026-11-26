@@ -1,1 +1,3 @@
-
+name = "godia-prime-connect-solution"
+compatibility_date = "2026-11-26"
+main = "src/index.js"
