@@ -127,4 +127,15 @@ async function handle(req, env) {
   if(path==='/api/me' && method==='GET') { const user=await auth(req,env); return user?json({ok:true,user}):json({ok:false,message:'Authentication required'},401); }
   return json({ok:false,message:'Not found'},404);
 }
-export default { async fetch(request,env,ctx) { try { if(new URL(request.url).pathname.startsWith('/api/')) return await handle(request,env); return env.ASSETS ? env.ASSETS.fetch(request) : new Response('GODIA PRIME CONNECT API is running. Configure the static assets binding.',{status:200}); } catch(e) { return json({ok:false,message:'Internal server error',detail:env.ENVIRONMENT==='development'?e.message:undefined},500); } } };
+export default { 
+  async fetch(request, env, ctx) { 
+    try { 
+      const url = new URL(request.url);
+      if (url.pathname.startsWith('/api/')) return await handle(request, env);
+      const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GODIA PRIME</title><style>body{font-family:sans-serif;background:#0f172a;color:#fff;text-align:center;padding:20px}h1{color:#facc15}.card{background:#fff;color:#111;border-radius:16px;padding:20px;max-width:520px;margin:20px auto}.btn{display:block;background:#22c55e;color:#fff;padding:14px;border-radius:10px;text-decoration:none;font-weight:bold;margin-top:12px}.btn2{background:#2563eb}</style></head><body><h1>GODIA PRIME</h1><p>Connect Solution - Kisii, Kenya</p><p>✅ API + M-PESA + D1 Connected</p><div class="card"><h2>Karibu GODIA Prime</h2><p>Marketplace • POS • Supply Chain</p><a class="btn" href="https://wa.me/254700000000">WhatsApp Sasa</a><a class="btn btn2" href="/api/health">Test API Health</a></div><p>© 2026 GODIA Prime</p></body></html>`;
+      return new Response(html, { headers: { "Content-Type": "text/html" } });
+    } catch(e) { 
+      return json({ok:false,message:'Internal server error'},500); 
+    } 
+  } 
+};
