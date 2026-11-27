@@ -1,3 +1,4 @@
+
 name = "godia-prime"
 main = "src/index.js"
 compatibility_date = "2024-01-01"
@@ -9,3 +10,9 @@ database_id = "812b9156-713c-429d-ad2a-41d30be8e283"
 
 [assets]
 directory = "./public"
+
+[vars]
+DARAJA_TRANSACTION_TYPE = "CustomerPayBillOnline"
+DARAJA_ACCOUNT_REFERENCE = "GODIA"
+GODIA_PLAN_BASIC_KES = "0"
+GODIA_SUBSCRIPTION_DAYS = "30"
