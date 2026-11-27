@@ -1,4 +1,3 @@
-
 /**
  * GODIA PRIME CONNECT SOLUTIONS
  * API ENGINE V2.1 - PHONE/PASSWORD LOGIN
@@ -7,29 +6,24 @@
  * Google sign-in is intentionally disabled.
  * Existing D1 tables and records are not modified or deleted by deployment.
  */
-
 const JSON_HEADERS = {
   "content-type": "application/json; charset=utf-8",
   "cache-control": "no-store"
 };
-
 const uid = (prefix = "") => prefix + crypto.randomUUID();
 const nowIso = () => new Date().toISOString();
-
 function json(data, status = 200, headers = {}) {
   return new Response(JSON.stringify(data), {
     status,
     headers: { ...JSON_HEADERS, ...headers }
   });
 }
-
 function corsHeaders(req, env) {
   const origin = req.headers.get("Origin");
   const allowed = String(env.FRONTEND_ORIGIN || "*")
     .split(",")
     .map(x => x.trim());
-
-  return {
+ return {
     "access-control-allow-origin":
       allowed.includes("*") ? "*" : (allowed.includes(origin) ? origin : "null"),
     "access-control-allow-methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
@@ -38,14 +32,12 @@ function corsHeaders(req, env) {
     "vary": "Origin"
   };
 }
-
 function b64url(bytes) {
   return btoa(String.fromCharCode(...new Uint8Array(bytes)))
     .replace(/=/g, "")
     .replace(/\+/g, "-")
     .replace(/\//g, "_");
 }
-
 function fromB64url(value) {
   const s = value.replace(/-/g, "+").replace(/_/g, "/");
   return Uint8Array.from(
@@ -53,17 +45,14 @@ function fromB64url(value) {
     c => c.charCodeAt(0)
   );
 }
-
 async function signToken(user, env) {
   if (!env.JWT_SECRET || env.JWT_SECRET.length < 32) {
     throw new Error("JWT_SECRET must contain at least 32 characters");
   }
-
   const header = b64url(
     new TextEncoder().encode(JSON.stringify({ alg: "HS256", typ: "JWT" }))
   );
-
-  const payload = b64url(
+const payload = b64url(
     new TextEncoder().encode(JSON.stringify({
       sub: user.id,
       role: user.role || "customer",
@@ -71,18 +60,15 @@ async function signToken(user, env) {
       exp: Math.floor(Date.now() / 1000) + 604800
     }))
   );
-
-  const data = `${header}.${payload}`;
-
-  const key = await crypto.subtle.importKey(
+const data = `${header}.${payload}`;
+const key = await crypto.subtle.importKey(
     "raw",
     new TextEncoder().encode(env.JWT_SECRET),
     { name: "HMAC", hash: "SHA-256" },
     false,
     ["sign"]
   );
-
-  const signature = await crypto.subtle.sign(
+ const signature = await crypto.subtle.sign(
     "HMAC",
     key,
     new TextEncoder().encode(data)
