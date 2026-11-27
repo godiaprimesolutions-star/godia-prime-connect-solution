@@ -319,11 +319,43 @@ async function handle(req, env) {
       `).bind(id, email, phone, fullName, "customer", passwordHash).run();
       const user = await env.DB.prepare("SELECT id,email,phone,full_name,role FROM users WHERE id=?").bind(id).first();
       return json({ ok: true, token: await signToken(user, env), user }, 201);
-    } catch (error) {
+    }     } catch (error) {
       console.error("Registration error:", error.message);
-      return json({ ok: false, message: "An account with this email or phone may already exist" }, 409);
-    }
-  }
+
+      const message = String(error.message || "");
+
+      if (message.includes("UNIQUE constraint failed")) {
+        if (message.includes("users.email")) {
+          return json({
+            ok: false,
+            code: "EMAIL_EXISTS",
+            message: "This email address is already registered."
+          }, 409);
+        }
+
+        if (message.includes("users.phone")) {
+          return json({
+            ok: false,
+            code: "PHONE_EXISTS",
+            message: "This phone number is already registered."
+          }, 409);
+        }
+
+        if (message.includes("users.google_sub")) {
+          return json({
+            ok: false,
+            code: "ACCOUNT_EXISTS",
+            message: "This account is already registered."
+          }, 409);
+        }
+      }
+
+      return json({
+        ok: false,
+        code: "REGISTRATION_ERROR",
+        message: "Registration failed. Please try again."
+      }, 500);
+            }
 
   /* Phone/email + password login. Supports old and new frontend field names. */
   if (path === "/api/auth/login" && method === "POST") {
