@@ -168,7 +168,7 @@ async function hashPassword(password) {
   const bits = await crypto.subtle.deriveBits({
     name: "PBKDF2",
     salt,
-    iterations: 150000,
+    iterations: 100,000,
     hash: "SHA-256"
   }, key, 256);
 
@@ -191,7 +191,7 @@ async function verifyPassword(password, stored) {
     const bits = await crypto.subtle.deriveBits({
       name: "PBKDF2",
       salt: fromB64url(salt),
-      iterations: 150000,
+      iterations: 100,000,
       hash: "SHA-256"
     }, key, 256);
 
