@@ -1,5 +1,5 @@
 
-name = "godia-prime"
+name = "godia-prime-connect-solution"
 main = "src/index.js"
 compatibility_date = "2024-01-01"
 
@@ -10,6 +10,8 @@ database_id = "812b9156-713c-429d-ad2a-41d30be8e283"
 
 [assets]
 directory = "./public"
+binding = "ASSETS"
+run_worker_first = ["/api/*"]
 
 [vars]
 DARAJA_TRANSACTION_TYPE = "CustomerPayBillOnline"
