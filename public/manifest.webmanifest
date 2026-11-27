@@ -1,0 +1,11 @@
+{
+  "name": "GODIA PRIME CONNECT",
+  "short_name": "GODIA PRIME",
+  "description": "GODIA PRIME CONNECT marketplace",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#102a43",
+  "icons": [{"src":"/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}
