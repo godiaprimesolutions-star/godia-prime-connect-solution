@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0756c9">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="64x64" href="./icons/favicon-64.png">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="GODIA PRIME">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="application-name" content="GODIA PRIME CONNECT">
+
+<meta name="description" content="GODIA PRIME CONNECT SOLUTIONS marketplace">
+<title>GODIA PRIME CONNECT SOLUTIONS</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config={theme:{extend:{colors:{navy:'#0A1F44',emerald:'#0E7A4D',green2:'#16A368',gold:'#E9B44C',canvas:'#F4F6F9',muted:'#8A94A6'}}}}
+</script>
+<style>
+:root{--navy:#0A1F44;--green:#0E7A4D;--green2:#16A368;--gold:#E9B44C;--bg:#F4F6F9;--ink:#0A1F44;--body:#3A4556;--muted:#8A94A6;--card:#fff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--body);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer;min-height:46px}.page{display:none;animation:fade .2s ease}.page.active{display:block}@keyframes fade{from{opacity:.5;transform:translateY(4px)}to{opacity:1;transform:none}}.card{background:var(--card);border-radius:16px;box-shadow:0 7px 24px rgba(10,31,68,.07)}.btn{border-radius:12px;padding:11px 15px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px}.primary{background:var(--navy);color:white}.green{background:var(--green);color:white}.gold{background:var(--gold);color:var(--navy)}.outline{border:1px solid #dce2eb;color:var(--navy);background:white}.field{width:100%;border:1px solid #dce2eb;border-radius:12px;padding:12px 14px;background:#fff;color:#0A1F44;outline:none;min-height:48px}.field:focus{border-color:var(--green);box-shadow:0 0 0 3px #0e7a4d18}.muted{color:var(--muted)}.navitem{display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:10px;color:#e9eef8;width:100%;text-align:left}.navitem.active{background:#ffffff16;border-left:4px solid var(--green2);color:#fff}.product-img{width:100%;height:145px;object-fit:cover;border-radius:12px;background:#eef1f5}.badge-discount{position:absolute;top:9px;left:9px;background:#D92D20;color:#fff;padding:4px 8px;border-radius:7px;font-size:11px;font-weight:800}.bottomnav{position:fixed;bottom:0;left:0;right:0;background:#fff;box-shadow:0 -5px 24px #0a1f4412;z-index:30;display:flex;justify-content:space-around;padding:7px 3px calc(7px + env(safe-area-inset-bottom))}.bottomnav button{background:none;border:0;min-height:50px;flex:1;color:#8A94A6;font-size:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}.bottomnav button.active{color:var(--navy);font-weight:800}.sidebar{background:var(--navy);color:white;width:245px;position:fixed;inset:0 auto 0 0;padding:22px 14px;overflow:auto;z-index:20}.mainwrap{margin-left:245px;min-height:100vh}.topbar{height:68px;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 25px;position:sticky;top:0;z-index:15;box-shadow:0 3px 16px #0a1f4408}.content{max-width:1400px;margin:auto;padding:24px 26px 100px}.kpi{padding:18px}.kpi strong{font-size:24px;color:var(--navy)}.toast{position:fixed;top:78px;left:50%;transform:translateX(-50%);background:var(--navy);color:white;padding:12px 18px;border-radius:12px;z-index:100;box-shadow:0 8px 30px #0002;display:none;max-width:92%;text-align:center}.toast.show{display:block}.status{padding:3px 9px;border-radius:99px;font-size:11px;font-weight:800;background:#eef2f7;color:#445}.status.good{background:#e6f4ec;color:#0E7A4D}.status.warn{background:#fff2d8;color:#8a5b00}.status.bad{background:#fde8e7;color:#b42318}.dark{--bg:#101827;--card:#182438;--ink:#f3f6fb;--body:#d8e0ec;--muted:#9aa8bb}.dark .topbar,.dark .bottomnav,.dark .field{background:#182438;color:#f3f6fb}.dark .field,.dark .outline{border-color:#35445a}.dark .outline{background:#182438;color:#f3f6fb}.dark .bottomnav button{color:#a8b4c6}.dark .bottomnav button.active{color:#fff}.dark .card{box-shadow:0 7px 24px #0002}.dark h1,.dark h2,.dark h3,.dark .text-navy{color:#f3f6fb!important}.hide{display:none!important}.auth-required .sidebar,.auth-required .topbar,.auth-required .bottomnav{display:none!important}.auth-required .mainwrap{margin-left:0}.auth-required .content{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px 13px}.notice{border:1px solid #f0d79b;background:#fff9e9;color:#76520a;border-radius:12px;padding:12px 14px;font-size:13px}
+@media(max-width:800px){.sidebar{display:none}.mainwrap{margin-left:0}.topbar{height:60px;padding:0 13px}.content{padding:16px 13px 100px}.desktop-search{display:none}.product-img{height:125px}.bottomnav{display:flex}.kpi strong{font-size:20px}}
+@media(min-width:801px){.bottomnav{display:none}.mobile-menu{display:none!important}}
+
+/* GODIA PRIME branded phone/PIN login */
+.login-page{width:100%;max-width:560px;margin:0 auto;border-radius:26px;overflow:hidden;background:#fff;box-shadow:0 18px 55px rgba(4,27,91,.22);border:1px solid #d8e5ff}
+.login-hero{position:relative;isolation:isolate;overflow:hidden;padding:28px 22px 42px;text-align:center;color:#fff;background:radial-gradient(circle at 78% 18%,rgba(20,165,255,.65),transparent 34%),linear-gradient(135deg,#061b62 0%,#0649b7 58%,#0879d0 100%)}
+.login-hero:before{content:"";position:absolute;z-index:-1;left:-8%;right:-8%;bottom:-48px;height:105px;background:linear-gradient(180deg,rgba(7,34,94,.05),rgba(3,20,70,.75));clip-path:polygon(0 65%,8% 55%,13% 62%,18% 35%,23% 58%,30% 48%,36% 68%,43% 28%,50% 55%,57% 38%,64% 62%,72% 20%,78% 55%,84% 35%,90% 57%,100% 30%,100% 100%,0 100%)}
+.login-brand-mark{width:70px;height:70px;margin:0 auto 10px;border-radius:22px;display:flex;align-items:center;justify-content:center;font-size:43px;font-weight:950;color:#06215f;background:linear-gradient(145deg,#ffe17a,#e9ad18);box-shadow:0 8px 25px #00164c66}
+.login-brand-name{font-size:clamp(24px,6vw,34px);font-weight:950;letter-spacing:.045em;line-height:1.05}
+.login-brand-name span{color:#ffd34f}
+.login-brand-sub{font-size:11px;letter-spacing:.25em;font-weight:800;margin-top:8px;color:#e4efff}
+.login-tagline{font-size:14px;font-weight:650;font-style:italic;color:#fff;margin-top:13px}
+.login-flag{height:12px;display:flex;gap:0;box-shadow:0 3px 10px #001b5a24}
+.login-flag i{display:block;flex:1}
+.login-flag i:nth-child(1){background:#111}
+.login-flag i:nth-child(2){background:#d71920}
+.login-flag i:nth-child(3){background:#087a3d}
+.login-panel{padding:26px 22px 22px;background:linear-gradient(180deg,#fff 0%,#f7faff 100%)}
+.login-lock{width:66px;height:66px;margin:-60px auto 18px;position:relative;display:flex;align-items:center;justify-content:center;border-radius:50%;background:linear-gradient(145deg,#087cf0,#063da9);border:5px solid #fff;color:white;font-size:29px;box-shadow:0 8px 20px #0649b733}
+.login-panel h1{font-size:clamp(21px,5vw,27px);line-height:1.2;text-align:center;color:#092b78;font-weight:900;margin:0}
+.login-panel .login-intro{text-align:center;color:#17356e;margin:8px 0 24px;font-size:15px}
+.login-field-wrap{position:relative;margin-top:14px}
+.login-field-wrap .field{min-height:62px;border:2px solid #b8d0ff;border-radius:17px;background:#f4f8ff;padding:13px 16px 13px 54px;font-size:16px;color:#08286f}
+.login-field-wrap .field:focus{border-color:#0874e8;box-shadow:0 0 0 4px #0874e81c}
+.login-field-icon{position:absolute;left:17px;top:50%;transform:translateY(-50%);font-size:22px;color:#0646b7;pointer-events:none}
+.login-submit{width:100%;min-height:62px;margin-top:22px;border:0;border-radius:17px;background:linear-gradient(100deg,#0875ed,#0636a5);color:white;font-size:19px;font-weight:900;box-shadow:0 8px 20px #0647b733}
+.login-submit:active{transform:translateY(1px)}
+.login-support{text-align:center;color:#0648b6;font-weight:750;margin-top:18px;font-size:14px}
+.login-benefits{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:23px;padding-top:18px;border-top:1px solid #d6e3ff;text-align:center;color:#092b78;font-size:12px;font-weight:750}
+.login-benefits span{display:block;font-size:21px;margin-bottom:4px}
+.login-footer{padding:17px 12px 20px;text-align:center;background:linear-gradient(120deg,#061c64,#073fa9);border-top:5px solid #f2c333;color:white;font-size:13px;font-weight:750;font-style:italic}
+@media(max-width:480px){.login-page{border-radius:22px}.login-hero{padding:24px 16px 38px}.login-panel{padding:23px 17px 19px}.login-brand-mark{width:62px;height:62px}.login-panel .login-intro{font-size:14px}.login-submit{font-size:17px}.login-benefits{font-size:11px}}
+
+
+.login-register-prompt{line-height:1.5}
+.login-register-prompt button:focus-visible{outline:3px solid #f2b544;outline-offset:3px}
+@media(max-width:420px){.login-register-prompt{font-size:13px}.login-register-prompt button{margin-top:7px}}
+
+
+/* Colourful, accessible registration and marketing motion */
+.register-shell{width:100%;max-width:760px;margin:10px auto 24px;background:#fff;border-radius:25px;overflow:hidden;box-shadow:0 18px 55px rgba(4,27,91,.13);border:1px solid #e0e9f7}
+.register-hero{position:relative;isolation:isolate;overflow:hidden;padding:30px 26px 27px;color:#fff;background:linear-gradient(120deg,#061b62,#0759bd 58%,#0b9a79)}
+.register-kicker{font-size:10px;letter-spacing:.2em;font-weight:900;color:#ffe17a}
+.register-hero h1{font-size:clamp(25px,5vw,37px);font-weight:950;line-height:1.1;margin:13px 0 9px}
+.register-hero h1 span{color:#ffe17a}
+.register-hero p{color:#e4efff;font-size:14px;max-width:500px}
+.register-pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.register-pills span{padding:7px 10px;border-radius:99px;background:#ffffff20;border:1px solid #ffffff35;font-size:11px;font-weight:800}
+.register-orb{position:absolute;border-radius:50%;z-index:-1;filter:blur(1px);animation:orbFloat 7s ease-in-out infinite}
+.orb-one{width:180px;height:180px;right:-35px;top:-65px;background:#f5c84c55}
+.orb-two{width:120px;height:120px;right:100px;bottom:-85px;background:#25e0b455;animation-delay:-3s}
+@keyframes orbFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-15px) scale(1.08)}}
+.register-body{padding:25px 26px 27px}
+.register-body h2{font-size:21px;font-weight:900;color:#092b78}
+.register-type-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.register-type{min-height:190px;text-align:left;padding:18px;border-radius:18px;border:1px solid #dce7f8;background:linear-gradient(145deg,#f5f9ff,#fff);display:flex;flex-direction:column;align-items:flex-start;gap:8px;transition:transform .2s,box-shadow .2s,border-color .2s}
+.register-type:hover{transform:translateY(-4px);box-shadow:0 12px 26px #092b781c;border-color:#0b83d8}
+.register-type strong{font-size:18px;color:#092b78}.register-type small{font-size:12px;line-height:1.5;color:#62718a}
+.type-icon{font-size:31px}.type-cta{margin-top:auto;font-size:12px;font-weight:900;color:#087b55}
+.agent-type{background:linear-gradient(145deg,#fff9e9,#fff)}
+.agent-type .type-cta{color:#a56b00}
+.registration-form{animation:formIn .28s ease}
+@keyframes formIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.back-choice{border:0;background:transparent;color:#087b55;font-weight:850;padding:3px 0 15px;min-height:35px}
+.form-heading{display:flex;align-items:center;gap:12px;padding:12px 14px;margin-bottom:17px;border-radius:15px;background:linear-gradient(100deg,#eaf4ff,#eafaf2)}
+.form-heading>span{font-size:30px}.form-heading h2{margin:0}.form-heading p{font-size:12px;color:#64748b;margin-top:3px}
+.form-label{display:block;font-size:13px;font-weight:800;color:#243b63;margin:13px 0 6px}
+.registration-form .field{min-height:49px}
+.location-heading{margin-top:22px;padding:11px 13px;border-radius:11px;background:#edf7f1;color:#087b55;font-size:13px;font-weight:900}
+.register-submit{width:100%;margin-top:22px;min-height:55px;border:0;border-radius:14px;background:linear-gradient(100deg,#0875ed,#0636a5);color:white;font-weight:900;font-size:15px;box-shadow:0 8px 20px #0647b733;transition:transform .2s,filter .2s}
+.register-submit:hover{filter:brightness(1.08);transform:translateY(-2px)}
+.register-submit span{margin-left:8px}.agent-submit{background:linear-gradient(100deg,#078451,#075b45)}
+.form-security{font-size:11px;text-align:center;color:#68778d;margin-top:12px}.registration-form input[type=checkbox]{width:18px;height:18px;flex:0 0 18px;accent-color:#087b55}
+.promo-ribbon{overflow:hidden;border-radius:16px;padding:13px 15px;margin:0 0 18px;color:white;background:linear-gradient(100deg,#073a91,#087a66,#d39a1b);background-size:200% 200%;animation:promoGlow 8s ease infinite}
+.promo-ribbon strong{display:block;font-size:14px;font-weight:950}.promo-ribbon span{display:block;font-size:12px;color:#f2f7ff;margin-top:3px}
+@keyframes promoGlow{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+@media(max-width:520px){.register-body{padding:20px 16px}.register-hero{padding:25px 18px}.register-type-grid{grid-template-columns:1fr}.register-type{min-height:150px}}
+@media(prefers-reduced-motion:reduce){.register-orb,.promo-ribbon,.registration-form,.register-type{animation:none;transition:none}}
+
+
+/* GODIA PRIME: distinct bright colour identity for all twelve screens */
+.page:not(#login):not(#register){
+  border-radius:24px; padding:clamp(14px,2.4vw,26px); min-height:calc(100vh - 150px);
+  border:1px solid var(--page-border,#dce7f5); border-top:8px solid var(--page-accent,#2563eb);
+  background:var(--page-surface,linear-gradient(145deg,#fff,#f3f7ff));
+  box-shadow:0 12px 34px rgba(10,31,68,.055);
+}
+#home.page{--page-accent:#7c3aed;--page-border:#ddd0ff;--page-surface:linear-gradient(145deg,#f4edff 0%,#fff 54%,#eaf8ff 100%)}
+#marketplace.page{--page-accent:#0891b2;--page-border:#b9edf4;--page-surface:linear-gradient(145deg,#e5fbff 0%,#fff 58%,#e8fff5 100%)}
+#details.page{--page-accent:#e11d8a;--page-border:#ffd0e9;--page-surface:linear-gradient(145deg,#fff0f7 0%,#fff 58%,#fff3e7 100%)}
+#cart.page{--page-accent:#d97706;--page-border:#ffe0a8;--page-surface:linear-gradient(145deg,#fff7e7 0%,#fff 58%,#fff0d7 100%)}
+#checkout.page{--page-accent:#0d9488;--page-border:#b9eee8;--page-surface:linear-gradient(145deg,#e7fffb 0%,#fff 58%,#eaf7ff 100%)}
+#confirmation.page{--page-accent:#16a34a;--page-border:#bdecc9;--page-surface:linear-gradient(145deg,#eaffef 0%,#fff 58%,#e7fff9 100%)}
+#orders.page{--page-accent:#2563eb;--page-border:#c8dcff;--page-surface:linear-gradient(145deg,#edf4ff 0%,#fff 58%,#eafaff 100%)}
+#tracking.page{--page-accent:#9333ea;--page-border:#e2c9ff;--page-surface:linear-gradient(145deg,#f5edff 0%,#fff 58%,#f0efff 100%)}
+#profile.page{--page-accent:#0891b2;--page-border:#bcecf5;--page-surface:linear-gradient(145deg,#e8fbff 0%,#fff 58%,#eef7ff 100%)}
+#unavailable.page{--page-accent:#ea580c;--page-border:#ffd2b8;--page-surface:linear-gradient(145deg,#fff1e8 0%,#fff 58%,#fff6e9 100%)}
+#home.page h1,#marketplace.page h1,#details.page h1,#cart.page h1,#checkout.page h1,#confirmation.page h1,#orders.page h1,#tracking.page h1,#profile.page h1,#unavailable.page h1{color:var(--page-accent)!important}
+.page:not(#login):not(#register) .card{border:1px solid rgba(120,145,180,.14);box-shadow:0 8px 24px rgba(10,31,68,.07)}
+.page:not(#login):not(#register) .btn.primary{background:linear-gradient(110deg,#1d4ed8,#4338ca)}
+.page:not(#login):not(#register) .btn.green{background:linear-gradient(110deg,#059669,#0d9488)}
+.page:not(#login):not(#register) .btn.gold{background:linear-gradient(110deg,#fbbf24,#f97316);color:#382000}
+.form-info-panel{border-radius:15px;padding:13px 15px;margin:12px 0 18px;background:linear-gradient(110deg,#eff6ff,#f5f3ff);border:1px solid #d8defe;color:#243b68;font-size:13px;line-height:1.55}
+.form-info-panel strong{color:#173b91}
+.form-help{display:block;margin:5px 0 12px;color:#63728b;font-size:12px;line-height:1.45}
+.role-help{padding:11px 13px;border-radius:12px;background:linear-gradient(110deg,#fff7df,#fff0e8);border:1px solid #ffe0ad;color:#7a4700;font-size:12px;line-height:1.5;margin:8px 0 15px}
+.form-security{line-height:1.55}
+.page .field:disabled{background:#eaf0f7;color:#63728b;opacity:1;cursor:not-allowed}
+@media(max-width:800px){.page:not(#login):not(#register){padding:12px;border-radius:19px;min-height:calc(100vh - 130px)}}
+@media(prefers-reduced-motion:reduce){.page{animation:none!important;scroll-behavior:auto!important}}
+button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #f59e0b!important;outline-offset:2px}
+/* Desktop and laptop refinements */
+@media(min-width:801px){
+ .content{padding:28px clamp(24px,3vw,48px) 60px;max-width:1600px}
+ .register-shell{max-width:920px;margin:18px auto 34px}
+ .register-hero{padding:36px 34px 32px}
+ .register-body{padding:30px 34px 34px}
+ .login-page{max-width:600px}
+ .page:not(#login):not(#register){min-height:calc(100vh - 122px)}
+ .product-img{height:180px}
+ .topbar{padding:0 clamp(24px,3vw,48px)}
+}
+@media(min-width:1200px){
+ .sidebar{width:265px;padding:26px 17px}
+ .mainwrap{margin-left:265px}
+ .content{padding-left:42px;padding-right:42px}
+ .product-img{height:205px}
+}
+@media(max-width:800px){.register-shell{max-width:100%}.content{width:100%}}
+
+
+</style>
+</head>
+<body>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<button id="pwaInstallButton" type="button" aria-label="Install GODIA PRIME CONNECT app" style="position:fixed;right:14px;top:12px;z-index:40;display:flex;align-items:center;gap:8px;border:1px solid #f4d36e;border-radius:999px;padding:9px 14px;background:linear-gradient(110deg,#0756c9,#42118a);color:#fff;font-size:12px;font-weight:900;box-shadow:0 5px 18px #07164b55;min-height:40px">⬇ Install App</button>
+
+<div id="splash" class="fixed inset-0 z-50 flex flex-col items-center justify-center text-white" style="background:#0A1F44">
+ <img src="./icons/icon-192.png" alt="GODIA PRIME CONNECT app icon" class="w-20 h-20 rounded-3xl object-cover mb-5 shadow-xl">
+ <div class="text-2xl font-black tracking-widest">GODIA PRIME</div><div class="text-xs tracking-[.32em] mt-2 text-slate-300">CONNECT SOLUTIONS</div>
+ <p class="text-xs text-slate-300 mt-8">Connecting to your business platform…</p>
+</div>
+<aside class="sidebar">
+ <div class="flex items-center gap-3 px-2 mb-8"><img src="./icons/icon-192.png" alt="GP" class="w-11 h-11 rounded-xl object-cover shadow-md"><div><div class="font-black tracking-wide">GODIA PRIME</div><div class="text-[10px] tracking-widest text-slate-300">CONNECT SOLUTIONS</div></div></div>
+ <div class="text-[10px] uppercase tracking-widest text-slate-400 px-3 mb-2">Workspace</div><nav id="sideNav" class="space-y-1"></nav>
+ <div class="mt-8 border-t border-white/10 pt-5"><button class="navitem" onclick="go('profile')">⚙️ <span>Profile & settings</span></button><button class="navitem" onclick="logout()">↪ <span>Sign out</span></button></div>
+ <div class="text-[10px] text-slate-400 mt-10 px-3">Powered by GODIA PRIME</div>
+</aside>
+<div class="mainwrap">
+<header class="topbar">
+ <div class="flex items-center gap-3"><button class="mobile-menu text-2xl" onclick="notify('Use the navigation below to move around.')">☰</button><div class="font-black text-sm sm:text-base" style="color:#0A1F44">GODIA PRIME</div></div>
+ <div class="desktop-search relative w-1/3"><input id="globalSearch" class="field !py-2 !min-h-10" placeholder="Search live products…" oninput="renderProducts()"></div>
+ <div class="flex items-center gap-3"><button onclick="go('profile')" class="w-9 h-9 rounded-full text-white font-bold" style="background:#0E7A4D">GP</button></div>
+</header>
+<main class="content">
+<section id="login" class="page">
+ <div class="login-page">
+  <div class="login-hero">
+   <img class="login-brand-mark" src="./icons/icon-192.png" alt="GODIA PRIME CONNECT logo" style="object-fit:cover">
+   <div class="login-brand-name">GODIA <span>PRIME</span></div>
+   <div class="login-brand-sub">CONNECT SOLUTIONS</div>
+   <div class="login-tagline">Connect • Pay • Grow</div>
+  </div>
+  <div class="login-flag" aria-label="Kenyan flag colours"><i></i><i></i><i></i></div>
+  <div class="login-panel">
+   <div class="login-lock" aria-hidden="true">🔒</div>
+   <h1>Welcome to GODIA PRIME</h1>
+   <p class="login-intro">Login with your phone number and secure PIN</p>
+   <label for="loginPhone" class="text-sm font-bold" style="color:#092b78">Phone number</label>
+   <div class="login-field-wrap">
+    <span class="login-field-icon" aria-hidden="true">☎</span>
+    <input id="loginPhone" type="tel" inputmode="tel" class="field" autocomplete="tel" placeholder="e.g. 0703 183 586">
+   </div>
+   <label for="loginPin" class="text-sm font-bold block mt-4" style="color:#092b78">PIN</label>
+   <div class="login-field-wrap">
+    <span class="login-field-icon" aria-hidden="true">🔐</span>
+    <input id="loginPin" type="password" inputmode="numeric" class="field" autocomplete="current-password" placeholder="Enter your 4–8 digit PIN" maxlength="8" pattern="[0-9]{4,8}">
+   </div>
+   <p class="text-xs muted mt-2">Use the PIN/password already registered to your account.</p>
+   <button class="login-submit" id="loginBtn" onclick="login()">Login Securely&nbsp; ›</button>
+   <div class="login-register-prompt" style="margin-top:18px;text-align:center;font-size:14px;color:#52627a">
+    New to GODIA PRIME?
+    <button type="button" onclick="go('register')" style="display:inline-block;margin-left:5px;padding:8px 12px;border:1px solid #0e7a4d;border-radius:10px;background:#eaf7f0;color:#0e7a4d;font-weight:800;cursor:pointer">
+     Create my account
+    </button>
+   </div>
+   <button id="ownerSetupLink" type="button" class="hide" onclick="go('ownerSetup')" style="display:block;margin:14px auto 0;padding:9px 12px;border:1px dashed #0e7a4d;border-radius:10px;color:#0e7a4d;font-weight:800;background:#f0faf4">First-time owner setup</button>
+   <div class="login-support">Need help? Contact Support</div>
+   <div class="login-benefits">
+    <div><span>🛡️</span>Secure access</div>
+    <div><span>⚡</span>Fast service</div>
+    <div><span>🤝</span>Trusted platform</div>
+   </div>
+  </div>
+  <div class="login-footer">Your Trusted Digital Partner in Kenya</div>
+ </div>
+</section>
+<section id="ownerSetup" class="page">
+ <div class="register-shell">
+  <div class="register-hero"><div class="relative z-10"><span class="register-kicker">GODIA PRIME CONNECT SOLUTIONS</span><h1>Create the <span>first owner account.</span></h1><p>This one-time setup is available only while no owner or administrator account exists.</p></div></div>
+  <div class="register-body">
+   <form class="registration-form" onsubmit="event.preventDefault();bootstrapOwner()">
+    <button type="button" class="back-choice" onclick="go('login')">← Back to login</button>
+    <div class="form-info-panel"><strong>🔐 Protected setup</strong><br>The setup requires the one-time secret configured in the Cloudflare Worker. Do not share that secret with anyone.</div>
+    <label class="form-label" for="ownerFullName">Owner full name</label><input id="ownerFullName" class="field" autocomplete="name" required>
+    <label class="form-label" for="ownerPhone">Phone number</label><input id="ownerPhone" class="field" type="tel" autocomplete="tel" placeholder="07XX XXX XXX" required>
+    <label class="form-label" for="ownerEmail">Email address</label><input id="ownerEmail" class="field" type="email" autocomplete="email" required>
+    <label class="form-label" for="ownerPassword">Account password (at least 8 characters)</label><input id="ownerPassword" class="field" type="password" minlength="8" autocomplete="new-password" required>
+    <label class="form-label" for="ownerPin">Login PIN (4–8 digits)</label><input id="ownerPin" class="field" type="password" inputmode="numeric" pattern="[0-9]{4,8}" minlength="4" maxlength="8" autocomplete="new-password" required>
+    <label class="form-label" for="ownerBootstrapSecret">One-time setup secret</label><input id="ownerBootstrapSecret" class="field" type="password" autocomplete="off" required>
+    <button class="register-submit" type="submit" id="ownerSetupBtn">Create first owner account →</button>
+   </form>
+  </div>
+ </div>
+</section>
+
+<section id="register" class="page">
+  <div class="register-shell">
+    <div class="register-hero">
+      <div class="register-orb orb-one"></div><div class="register-orb orb-two"></div>
+      <div class="relative z-10">
+        <span class="register-kicker">GODIA PRIME CONNECT SOLUTIONS</span>
+        <h1>Join the connection.<br><span>Grow with GODIA PRIME.</span></h1>
+        <p>One platform connecting customers, agents and businesses across Kenya.</p>
+        <div class="register-pills"><span>🛍️ Marketplace</span><span>📍 Across 47 counties</span><span>🤝 Business connections</span></div>
+      </div>
+    </div>
+    <div class="register-body">
+      <div id="registerChoice">
+        <h2>Choose your account type</h2>
+        <p class="muted text-sm mb-5">Select the registration that describes how you will use GODIA PRIME.</p>
+        <div class="register-type-grid">
+          <button type="button" class="register-type customer-type" onclick="showRegistrationForm('customer')">
+            <span class="type-icon">🛍️</span><strong>Customer</strong>
+            <small>Shop, discover products and connect with businesses.</small><span class="type-cta">Register as a customer →</span>
+          </button>
+          <button type="button" class="register-type agent-type" onclick="showRegistrationForm('agent')">
+            <span class="type-icon">🏪</span><strong>Agent / Business</strong>
+            <small>Register your business and connect with customers.</small><span class="type-cta">Register a business →</span>
+          </button>
+        </div>
+      </div>
+
+      <form id="customerRegistrationForm" class="registration-form hide" onsubmit="event.preventDefault();registerAccount('customer')">
+        <button type="button" class="back-choice" onclick="backToRegistrationChoice()">← Change account type</button>
+        <div class="form-heading"><span>🛍️</span><div><h2>Customer registration</h2><p>Tell us about yourself and where you are located.</p></div></div>
+        <div class="form-info-panel"><strong>🔐 Your information matters.</strong><br>GODIA PRIME CONNECT SOLUTIONS uses the details you submit to create and secure your account, contact you about services, support orders and handle genuine account or transaction concerns. We aim to collect only information needed for these purposes. Do not enter an M-Pesa PIN, bank PIN or one-time password. You should be able to ask to access or correct your information and exercise applicable data rights through GODIA PRIME’s verified privacy contact. The full privacy policy must explain retention, service-provider sharing and any hosting outside Kenya before public launch.</div>
+        <label class="form-label" for="customerName">Full name</label>
+        <input id="customerName" class="field" autocomplete="name" placeholder="Enter your full name" required>
+        <label class="form-label" for="customerPhone">Phone number</label>
+        <input id="customerPhone" class="field" type="tel" inputmode="tel" autocomplete="tel" placeholder="e.g. 0712 345 678" required>
+        <label class="form-label" for="customerEmail">Email address</label>
+        <input id="customerEmail" class="field" type="email" autocomplete="email" placeholder="name@example.com" required>
+        <label class="form-label" for="customerPassword">Account password (at least 8 characters)</label>
+        <input id="customerPassword" class="field" type="password" minlength="8" autocomplete="new-password" placeholder="Create an account password" required>
+        <label class="form-label" for="customerPin">Create PIN (4–8 digits)</label>
+        <input id="customerPin" class="field" type="password" inputmode="numeric" pattern="[0-9]{4,8}" minlength="4" maxlength="8" autocomplete="new-password" placeholder="Create your secure PIN" required>
+        <div class="location-heading">📍 Your location in Kenya</div>
+        <label class="form-label" for="customerCounty">County</label>
+        <select id="customerCounty" class="field" required><option value="">Select your county</option>
+          <option value="Baringo">Baringo</option>
+          <option value="Bomet">Bomet</option>
+          <option value="Bungoma">Bungoma</option>
+          <option value="Busia">Busia</option>
+          <option value="Elgeyo-Marakwet">Elgeyo-Marakwet</option>
+          <option value="Embu">Embu</option>
+          <option value="Garissa">Garissa</option>
+          <option value="Homa Bay">Homa Bay</option>
+          <option value="Isiolo">Isiolo</option>
+          <option value="Kajiado">Kajiado</option>
+          <option value="Kakamega">Kakamega</option>
+          <option value="Kericho">Kericho</option>
+          <option value="Kiambu">Kiambu</option>
+          <option value="Kilifi">Kilifi</option>
+          <option value="Kirinyaga">Kirinyaga</option>
+          <option value="Kisii">Kisii</option>
+          <option value="Kisumu">Kisumu</option>
+          <option value="Kitui">Kitui</option>
+          <option value="Kwale">Kwale</option>
+          <option value="Laikipia">Laikipia</option>
+          <option value="Lamu">Lamu</option>
+          <option value="Machakos">Machakos</option>
+          <option value="Makueni">Makueni</option>
+          <option value="Mandera">Mandera</option>
+          <option value="Marsabit">Marsabit</option>
+          <option value="Meru">Meru</option>
+          <option value="Migori">Migori</option>
+          <option value="Mombasa">Mombasa</option>
+          <option value="Murang'a">Murang'a</option>
+          <option value="Nairobi">Nairobi</option>
+          <option value="Nakuru">Nakuru</option>
+          <option value="Nandi">Nandi</option>
+          <option value="Narok">Narok</option>
+          <option value="Nyamira">Nyamira</option>
+          <option value="Nyandarua">Nyandarua</option>
+          <option value="Nyeri">Nyeri</option>
+          <option value="Samburu">Samburu</option>
+          <option value="Siaya">Siaya</option>
+          <option value="Taita-Taveta">Taita-Taveta</option>
+          <option value="Tana River">Tana River</option>
+          <option value="Tharaka-Nithi">Tharaka-Nithi</option>
+          <option value="Trans Nzoia">Trans Nzoia</option>
+          <option value="Turkana">Turkana</option>
+          <option value="Uasin Gishu">Uasin Gishu</option>
+          <option value="Vihiga">Vihiga</option>
+          <option value="Wajir">Wajir</option>
+          <option value="West Pokot">West Pokot</option>
+        </select>
+        <label class="form-label" for="customerConstituency">Constituency</label>
+        <select id="customerConstituency" class="field" required disabled><option value="">First select your county</option></select>
+        <label class="form-label" for="customerWard">Ward</label>
+        <select id="customerWard" class="field" required disabled><option value="">First select your constituency</option></select>
+        <label class="form-label" for="customerLocality">Village, estate, street or trading centre</label>
+        <input id="customerLocality" class="field" placeholder="Enter your local area" required>
+        <small class="form-help">County, constituency and ward options are linked in order using the Kenya county/IEBC constituency/ward dataset. You cannot type over these selections. <a href="https://github.com/nicanor-korir/kenya-regions" target="_blank" rel="noopener" style="color:#1746a2;font-weight:700">View location data source</a>.</small>
+        <label class="form-label flex items-start gap-2 mt-4" style="font-weight:600"><input id="customerPrivacyConsent" type="checkbox" required style="margin-top:3px"> I confirm that the information is accurate and acknowledge the privacy notice above for account, service and order-related use.</label>
+        <button id="customerRegisterBtn" class="register-submit" type="submit">Create customer account <span>→</span></button>
+        <p class="form-security">🔒 Your account details are submitted for registration. Never share an M-Pesa PIN, bank PIN or one-time password.</p>
+      </form>
+
+      <form id="agentRegistrationForm" class="registration-form hide" onsubmit="event.preventDefault();registerAccount('agent')">
+        <button type="button" class="back-choice" onclick="backToRegistrationChoice()">← Change account type</button>
+        <div class="form-heading"><span>🏪</span><div><h2>Agent / Business registration</h2><p>Register your business details and operating location.</p></div></div>
+        <label class="form-label" for="agentAccountType">Register as</label>
+        <select id="agentAccountType" class="field" required>
+          <option value="agent">Agent</option>
+          <option value="supplier">Supplier</option>
+          <option value="distributor">Distributor</option>
+        </select>
+        <div class="role-help" id="businessRoleHelp">Agent: a local representative who helps connect customers and businesses. You will be asked for identity and traceable business details for verification.</div>
+        <div class="form-info-panel"><strong>🛡️ Business verification and accountability</strong><br>These details help GODIA PRIME verify the person and business applying, contact the responsible operator about orders or complaints, and investigate reported misuse. Access should be restricted to authorised personnel. Only provide another person's contact details when they have agreed. Never provide a mobile-money PIN, bank PIN or OTP.</div>
+        <label class="form-label" for="agentName">Your full legal name (as shown on ID)</label>
+        <input id="agentName" class="field" autocomplete="name" placeholder="Enter your full name" required>
+        <label class="form-label" for="agentBusinessName">Business name</label>
+        <input id="agentBusinessName" class="field" placeholder="Enter your registered or trading name" required>
+        <label class="form-label" for="agentPhone">Business phone number</label>
+        <input id="agentPhone" class="field" type="tel" inputmode="tel" autocomplete="tel" placeholder="e.g. 0712 345 678" required>
+        <label class="form-label" for="agentPassword">Account password (at least 8 characters)</label>
+        <input id="agentPassword" class="field" type="password" minlength="8" autocomplete="new-password" placeholder="Create an account password" required>
+        <label class="form-label" for="agentPin">Create PIN (4–8 digits)</label>
+        <input id="agentPin" class="field" type="password" inputmode="numeric" pattern="[0-9]{4,8}" minlength="4" maxlength="8" autocomplete="new-password" placeholder="Create your secure PIN" required>
+        <label class="form-label" for="agentIdType">Identity document type</label>
+        <select id="agentIdType" class="field" required><option value="">Select ID type</option><option value="national_id">Kenyan National ID</option><option value="passport">Passport</option><option value="alien_id">Alien ID</option></select>
+        <label class="form-label" for="agentIdNumber">Identity document number</label>
+        <input id="agentIdNumber" class="field" autocomplete="off" placeholder="Enter ID / passport number" required>
+        <label class="form-label" for="agentEmail">Email address</label>
+        <input id="agentEmail" class="field" type="email" autocomplete="email" placeholder="name@example.com" required>
+        <label class="form-label" for="agentBusinessType">Type of business</label>
+        <select id="agentBusinessType" class="field" required>
+          <option value="">Select business type</option>
+          <option>Retail shop / Duka</option><option>Wholesale / Distributor</option>
+          <option>Supermarket</option><option>Agrovet / Farm supplies</option>
+          <option>Hardware / Building supplies</option><option>Pharmacy / Health shop</option>
+          <option>Restaurant / Hotel</option><option>Salon / Beauty</option>
+          <option>Transport / Logistics</option><option>Professional services</option>
+          <option>Online business</option><option>Other</option>
+        </select>
+        <label class="form-label" for="agentKraPin">KRA PIN (business or proprietor, where applicable)</label>
+        <input id="agentKraPin" class="field" autocomplete="off" placeholder="Enter KRA PIN if registered / applicable">
+        <small class="form-help">Optional where not applicable. Do not enter a PIN belonging to another person.</small>
+        <label class="form-label" for="agentPermitNumber">Business permit / licence number</label>
+        <input id="agentPermitNumber" class="field" placeholder="Enter permit / licence number if applicable">
+        <small class="form-help">Provide the relevant county or sector permit when your business activity requires one.</small>
+        <label class="form-label" for="agentBusinessAddress">Physical business address / building / plot</label>
+        <input id="agentBusinessAddress" class="field" placeholder="Give a traceable physical address" required>
+        <label class="form-label" for="agentYearsOperating">Years in operation</label>
+        <select id="agentYearsOperating" class="field" required><option value="">Select</option><option>New business (under 1 year)</option><option>1–2 years</option><option>3–5 years</option><option>6–10 years</option><option>Over 10 years</option></select>
+        <label class="form-label" for="agentReferencePhone">Alternative contact person phone (with their consent)</label>
+        <input id="agentReferencePhone" class="field" type="tel" placeholder="Optional trusted business contact">
+        <label class="form-label" for="agentProductsServices">Products or services handled</label>
+        <textarea id="agentProductsServices" class="field" rows="3" placeholder="Describe products, brands or services you deal in" required></textarea>
+        <label class="form-label" for="agentCoverage">Areas you serve / distribution coverage</label>
+        <input id="agentCoverage" class="field" placeholder="e.g. named towns, counties or delivery routes" required>
+        <div class="location-heading">📍 Business location in Kenya</div>
+        <label class="form-label" for="agentCounty">County</label>
+        <select id="agentCounty" class="field" required><option value="">Select your county</option>
+          <option value="Baringo">Baringo</option>
+          <option value="Bomet">Bomet</option>
+          <option value="Bungoma">Bungoma</option>
+          <option value="Busia">Busia</option>
+          <option value="Elgeyo-Marakwet">Elgeyo-Marakwet</option>
+          <option value="Embu">Embu</option>
+          <option value="Garissa">Garissa</option>
+          <option value="Homa Bay">Homa Bay</option>
+          <option value="Isiolo">Isiolo</option>
+          <option value="Kajiado">Kajiado</option>
+          <option value="Kakamega">Kakamega</option>
+          <option value="Kericho">Kericho</option>
+          <option value="Kiambu">Kiambu</option>
+          <option value="Kilifi">Kilifi</option>
+          <option value="Kirinyaga">Kirinyaga</option>
+          <option value="Kisii">Kisii</option>
+          <option value="Kisumu">Kisumu</option>
+          <option value="Kitui">Kitui</option>
+          <option value="Kwale">Kwale</option>
+          <option value="Laikipia">Laikipia</option>
+          <option value="Lamu">Lamu</option>
+          <option value="Machakos">Machakos</option>
+          <option value="Makueni">Makueni</option>
+          <option value="Mandera">Mandera</option>
+          <option value="Marsabit">Marsabit</option>
+          <option value="Meru">Meru</option>
+          <option value="Migori">Migori</option>
+          <option value="Mombasa">Mombasa</option>
+          <option value="Murang'a">Murang'a</option>
+          <option value="Nairobi">Nairobi</option>
+          <option value="Nakuru">Nakuru</option>
+          <option value="Nandi">Nandi</option>
+          <option value="Narok">Narok</option>
+          <option value="Nyamira">Nyamira</option>
+          <option value="Nyandarua">Nyandarua</option>
+          <option value="Nyeri">Nyeri</option>
+          <option value="Samburu">Samburu</option>
+          <option value="Siaya">Siaya</option>
+          <option value="Taita-Taveta">Taita-Taveta</option>
+          <option value="Tana River">Tana River</option>
+          <option value="Tharaka-Nithi">Tharaka-Nithi</option>
+          <option value="Trans Nzoia">Trans Nzoia</option>
+          <option value="Turkana">Turkana</option>
+          <option value="Uasin Gishu">Uasin Gishu</option>
+          <option value="Vihiga">Vihiga</option>
+          <option value="Wajir">Wajir</option>
+          <option value="West Pokot">West Pokot</option>
+        </select>
+        <label class="form-label" for="agentConstituency">Constituency</label>
+        <select id="agentConstituency" class="field" required disabled><option value="">First select your county</option></select>
+        <label class="form-label" for="agentWard">Ward</label>
+        <select id="agentWard" class="field" required disabled><option value="">First select your constituency</option></select>
+        <label class="form-label" for="agentLocality">Location, estate, village or trading centre</label>
+        <input id="agentLocality" class="field" placeholder="Enter your business location" required>
+        <small class="form-help">County, constituency and ward are dependent dropdowns. Select each in order; the names cannot be edited manually. <a href="https://github.com/nicanor-korir/kenya-regions" target="_blank" rel="noopener" style="color:#1746a2;font-weight:700">View location data source</a>.</small>
+        <label class="form-label flex items-start gap-2 mt-4" style="font-weight:600"><input id="agentVerificationConsent" type="checkbox" required style="margin-top:3px"> I confirm these details are accurate and acknowledge that the information will be used for account and business verification, fraud prevention, order support and service-related follow-up as explained above.</label>
+        <p class="form-security">🔒 Never enter an M-Pesa PIN, bank PIN, password or one-time password here. Identity documents should only be uploaded through a secure, verified channel if requested.</p>
+        <button id="agentRegisterBtn" class="register-submit agent-submit" type="submit">Submit business registration <span>→</span></button>
+        <p class="form-security">🔒 Your PIN is sent securely to the registration service and is never displayed.</p>
+      </form>
+      <p class="text-sm text-center mt-6">Already have an account? <button class="font-bold" style="color:#0E7A4D" onclick="go('login')">Login</button></p>
+      <p class="text-xs muted text-center mt-3">County, constituency and ward lists are loaded from a Kenya administrative-divisions directory. If unavailable, registration is paused rather than accepting manually typed locations.</p>
+    </div>
+  </div>
+</section>
+<section id="home" class="page">
+ <div class="flex flex-wrap justify-between items-center gap-3 mb-5"><div><p class="muted text-sm" id="greeting">Welcome to GODIA PRIME</p><h1 class="text-2xl sm:text-3xl font-black" style="color:#0A1F44">Discover something great.</h1></div><button class="btn outline" onclick="go('marketplace')">Explore shop →</button></div>
+ <div class="card p-5 sm:p-7 overflow-hidden relative mb-6" style="background:linear-gradient(115deg,#0A1F44,#17456c);color:white"><div class="relative z-10 max-w-lg"><span class="text-xs font-black tracking-widest" style="color:#E9B44C">GODIA PRIME MARKETPLACE</span><h2 class="text-2xl sm:text-3xl font-black mt-2">Great value. Trusted shopping.</h2><p class="text-sm text-slate-200 mt-2">Browse products and availability published by the platform.</p><button class="btn gold mt-5" onclick="go('marketplace')">Shop products</button></div><div class="absolute -right-8 -bottom-16 w-52 h-52 rounded-full opacity-20" style="background:#E9B44C"></div></div>
+ <div class="flex justify-between items-center mb-3"><h2 class="text-lg font-black" style="color:#0A1F44">Product categories</h2></div><div id="categories" class="flex gap-2 overflow-x-auto pb-4"></div>
+ <div class="flex justify-between items-center mb-3"><h2 class="text-lg font-black" style="color:#0A1F44">Available products</h2><button class="text-sm font-bold" style="color:#0E7A4D" onclick="go('marketplace')">See all</button></div><div id="homeProducts" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3"></div>
+</section>
+<section id="marketplace" class="page"><div class="flex flex-wrap justify-between items-center gap-3 mb-4"><div><h1 class="text-2xl font-black" style="color:#0A1F44">Marketplace</h1><p class="muted text-sm">Live catalogue from GODIA PRIME</p></div><select class="field !w-auto" id="sortProducts" onchange="renderProducts()"><option value="featured">Featured</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option></select></div><div id="catalogueMessage" class="notice mb-4 hide"></div><div class="flex gap-2 overflow-x-auto pb-4" id="filterChips"></div><div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3"></div></section>
+<section id="details" class="page"><button class="text-sm font-bold mb-4" style="color:#0E7A4D" onclick="go('marketplace')">← Back to shop</button><div id="detailContent"></div></section>
+<section id="cart" class="page"><h1 class="text-2xl font-black mb-1" style="color:#0A1F44">Your cart</h1><p class="muted text-sm mb-5">Review your selected products</p><div class="grid lg:grid-cols-3 gap-5"><div id="cartItems" class="lg:col-span-2 space-y-3"></div><div class="card p-5 h-fit"><h2 class="font-black text-lg" style="color:#0A1F44">Order summary</h2><div id="cartSummary" class="mt-4"></div><button class="btn gold w-full mt-5" onclick="startCheckout()">Proceed to checkout</button><button class="btn outline w-full mt-3" onclick="go('marketplace')">Continue shopping</button></div></div></section>
+<section id="checkout" class="page"><h1 class="text-2xl font-black mb-5" style="color:#0A1F44">Checkout</h1><p class="muted text-sm mb-4">Confirm your contact details. This checkout records an order only; payment is not collected or confirmed here.</p><div class="form-info-panel"><strong>🧾 Before placing your order</strong><br>Check the recipient name, phone number, products and displayed total. Keep your order reference. Before accepting payments, the platform must show delivery charges and its returns/refund terms clearly. This screen only records the order; it does not collect payment. Never share your M-Pesa PIN, bank PIN or OTP with a seller or delivery contact.</div><div class="grid lg:grid-cols-3 gap-5"><div class="card p-5 lg:col-span-2"><h2 class="font-black text-lg mb-4" style="color:#0A1F44">Delivery details</h2><label class="text-sm font-bold">Recipient name</label><input id="deliveryName" class="field mt-2 mb-4" placeholder="Full name"><label class="text-sm font-bold">Phone number</label><input id="deliveryPhone" class="field mt-2 mb-4" placeholder="07XX XXX XXX"></div><div class="card p-5 h-fit"><h2 class="font-black text-lg" style="color:#0A1F44">Order summary</h2><div id="checkoutSummary" class="mt-4"></div><button class="btn green w-full mt-5" id="placeOrderBtn" onclick="placeOrder()">Place order (payment pending)</button></div></div></section>
+<section id="pos" class="page">
+ <div class="flex flex-wrap items-center justify-between gap-3 mb-5"><div><p class="text-xs font-black tracking-widest" style="color:#FFC107">GODIA PRIME BUSINESS</p><h1 class="text-2xl sm:text-3xl font-black" style="color:#0B6E4F">Point of Sale</h1><p class="muted text-sm">Cashier sales • Live stock • Receipts</p></div><button class="btn outline" onclick="loadPosProducts();loadPosReport()">↻ Refresh</button></div>
+ <div class="grid lg:grid-cols-3 gap-4 mb-5"><div class="card p-4"><div class="muted text-xs">Today's sales</div><div id="posTodayTotal" class="text-2xl font-black mt-1" style="color:#FFC107">KSh 0.00</div><div id="posTodayCount" class="text-xs muted mt-1">0 sales</div></div><div class="card p-4"><div class="muted text-xs">Cash received</div><div id="posCashTotal" class="text-xl font-black mt-1" style="color:#2E7D32">KSh 0.00</div></div><div class="card p-4"><div class="muted text-xs">M-PESA Till recorded</div><div id="posMpesaTotal" class="text-xl font-black mt-1" style="color:#0B6E4F">KSh 0.00</div><div class="text-xs muted mt-1">Till entries remain unverified until checked</div></div></div>
+ <div class="grid xl:grid-cols-5 gap-5"><div class="xl:col-span-3"><div class="card p-4 mb-4"><div class="flex flex-wrap gap-2"><input id="posSearch" class="field flex-1" placeholder="Search product name or scan/type SKU" oninput="renderPosProducts()" onkeydown="handlePosScan(event)"><button class="btn outline" onclick="focusPosSearch()">Scan / Search</button></div><p class="text-xs muted mt-2">A USB/Bluetooth barcode scanner that types into this field is supported. Phone-camera scanning will be added in a later POS stage.</p></div><div id="posProductGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-3"><div class="muted p-5">Loading products…</div></div></div>
+ <div class="xl:col-span-2"><div class="card p-4"><div class="flex justify-between items-center"><h2 class="font-black text-lg" style="color:#0B6E4F">Current sale</h2><button class="text-sm font-bold" style="color:#E53935" onclick="clearPosCart()">Clear</button></div><div class="grid grid-cols-2 gap-2 mt-3"><div><label class="text-xs font-bold">Customer name</label><input id="posCustomerName" class="field mt-1" placeholder="Walk-in customer" value="Walk-in customer"></div><div><label class="text-xs font-bold">Phone (optional)</label><input id="posCustomerPhone" class="field mt-1" inputmode="tel" placeholder="07XX XXX XXX"></div></div><div id="posCartLines" class="space-y-2 mt-4"><p class="muted text-sm">No products added yet.</p></div><div class="border-t mt-4 pt-3"><div class="flex justify-between text-sm"><span>Subtotal</span><b id="posSubtotal">KSh 0.00</b></div><div class="flex justify-between text-lg font-black mt-2"><span>Total</span><span id="posTotal" style="color:#FFC107">KSh 0.00</span></div></div><div class="mt-4"><label class="text-sm font-bold">Payment method</label><select id="posPaymentMethod" class="field mt-1" onchange="updatePosPaymentFields()"><option value="cash">Cash</option><option value="mpesa_till">M-PESA Till (manual record)</option></select><div id="posCashFields" class="mt-3"><label class="text-sm font-bold">Cash received (KSh)</label><input id="posCashReceived" class="field mt-1" type="number" min="0" step="0.01" placeholder="Amount customer paid" oninput="renderPosTotals()"><div class="flex justify-between mt-2 text-sm"><span>Change</span><b id="posChange" style="color:#2E7D32">KSh 0.00</b></div></div><div id="posMpesaFields" class="mt-3 hide"><label class="text-sm font-bold">M-PESA transaction code</label><input id="posMpesaReceipt" class="field mt-1 uppercase" maxlength="30" placeholder="e.g. QAB12CDEF3"><p class="text-xs mt-1" style="color:#E53935">Manual entry is not proof of payment. Verify the code in your Till statement.</p></div><button id="posCompleteBtn" class="btn w-full mt-5" style="background:#0B6E4F;color:#fff" onclick="completePosSale()">Complete sale</button></div></div></div></div>
+ <div id="posReceiptPanel" class="card p-4 mt-5 hide"><div class="flex flex-wrap justify-between items-center gap-2 mb-3"><h2 class="font-black text-lg" style="color:#0B6E4F">Sale receipt</h2><div class="flex gap-2"><button class="btn outline" onclick="printPosReceipt()">Print receipt</button><button class="btn" style="background:#25D366;color:#fff" onclick="sharePosReceipt()">WhatsApp</button></div></div><div id="posReceiptContent"></div></div>
+ <div class="card p-4 mt-5"><div class="flex flex-wrap justify-between items-center gap-3"><div><h2 class="font-black text-lg" style="color:#0B6E4F">Daily sales report</h2><p class="text-xs muted">Kenya time (EAT)</p></div><input id="posReportDate" class="field !w-auto" type="date" onchange="loadPosReport()"></div><div class="overflow-x-auto mt-3"><table class="w-full text-sm"><thead><tr class="text-left border-b"><th class="py-2">Receipt</th><th>Time</th><th>Payment</th><th class="text-right">Total</th></tr></thead><tbody id="posSalesRows"><tr><td colspan="4" class="py-4 muted">No sales loaded.</td></tr></tbody></table></div></div>
+</section>
+<section id="confirmation" class="page"><div class="max-w-lg mx-auto card p-8 text-center mt-5"><div class="w-20 h-20 rounded-full mx-auto flex items-center justify-center text-5xl text-white" style="background:#0E7A4D">✓</div><h1 class="text-2xl font-black mt-5" style="color:#0A1F44">Order recorded</h1><p class="muted mt-2">The server accepted your order. No payment was collected or confirmed in this checkout.</p><div class="rounded-xl p-4 mt-5" style="background:#f4f6f9"><div class="text-xs muted">ORDER NUMBER</div><div id="orderNumber" class="font-black text-xl mt-1" style="color:#0A1F44"></div><div id="confirmedTotal" class="font-bold mt-2" style="color:#0E7A4D"></div><span class="status warn mt-3 inline-block">Payment not collected</span></div><button class="btn primary w-full mt-6" onclick="go('orders')">View my orders</button><button class="btn outline w-full mt-3" onclick="go('marketplace')">Continue shopping</button></div></section>
+<section id="orders" class="page"><h1 class="text-2xl font-black" style="color:#0A1F44">My orders</h1><p class="muted text-sm mb-5">Orders retrieved from your account</p><div id="ordersList" class="space-y-3"></div></section>
+<section id="tracking" class="page"><div class="card p-6 max-w-2xl"><h1 class="text-2xl font-black" style="color:#0A1F44">Order details</h1><div id="trackingContent" class="mt-4"></div></div></section>
+<section id="profile" class="page"><h1 class="text-2xl font-black mb-5" style="color:#0A1F44">Profile & settings</h1><div class="card p-6 flex items-center gap-4 mb-5"><div class="w-16 h-16 rounded-full flex items-center justify-center text-xl text-white font-black" style="background:#0E7A4D">GP</div><div class="flex-1 min-w-0"><h2 class="font-black text-lg truncate" style="color:#0A1F44" id="profileName">Not signed in</h2><p class="muted text-sm truncate" id="profileMeta">Sign in to view your account</p><p class="text-xs mt-1" id="profileRole"></p></div></div><div class="card divide-y"><button class="w-full text-left p-4 flex justify-between" onclick="go('orders')">📦 My orders <span>›</span></button><button class="w-full text-left p-4 flex justify-between" onclick="go('cart')">🛒 Shopping cart <span>›</span></button><button class="w-full text-left p-4 flex justify-between" onclick="toggleTheme()">🌙 Toggle dark / light mode <span id="themeLabel">Light mode</span></button><button class="w-full text-left p-4 flex justify-between" onclick="logout()">↪ Sign out <span>›</span></button></div><div class="form-info-panel mt-5"><strong>🔐 Privacy and account safety</strong><br>Keep your password and PIN private. Use GODIA PRIME’s verified privacy contact for account corrections or privacy requests once it is published. The full privacy policy, retention schedule and contact must be set before public launch.</div></section>
+<section id="unavailable" class="page"><div class="max-w-xl mx-auto card p-7 mt-5"><div class="text-3xl">🔒</div><h1 class="text-2xl font-black mt-3" style="color:#0A1F44" id="unavailableTitle">Feature unavailable</h1><p class="muted mt-2" id="unavailableText">This feature is not enabled by the current backend.</p><button class="btn outline mt-5" onclick="go('home')">Return home</button></div></section>
+</main></div>
+<nav class="bottomnav" id="bottomNav"><button data-page="home" onclick="go('home')"><span class="text-xl">⌂</span>Home</button><button data-page="marketplace" onclick="go('marketplace')"><span class="text-xl">▦</span>Shop</button><button data-page="cart" onclick="go('cart')"><span class="text-xl">🛒</span>Cart</button><button data-page="orders" onclick="go('orders')"><span class="text-xl">▤</span>Orders</button><button data-page="profile" onclick="go('profile')"><span class="text-xl">●</span>Profile</button></nav>
+<script>
+'use strict';
+const API_BASE = ''; // Same-origin Cloudflare Worker API.
+const TOKEN_KEY = 'gp_api_token';
+const CART_KEY = 'gp_cart_v2';
+let token = localStorage.getItem(TOKEN_KEY) || '';
+let me = null, products = [], cart = JSON.parse(localStorage.getItem(CART_KEY) || '{}');
+document.body.classList.add('auth-required');
+let filter = 'All', currentProduct = null, lastOrder = null;
+const $ = id => document.getElementById(id);
+const moneyMinor = n => 'KSh ' + (Number(n || 0) / 100).toLocaleString('en-KE',{minimumFractionDigits:2,maximumFractionDigits:2});
+const moneyKes = n => 'KSh ' + Number(n || 0).toLocaleString('en-KE',{maximumFractionDigits:2});
+function notify(message){const t=$('toast');t.textContent=message;t.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.classList.remove('show'),3200)}
+function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+async function api(path, options={}){
+ const headers={'Accept':'application/json',...(options.headers||{})};
+ if(options.body && !headers['Content-Type']) headers['Content-Type']='application/json';
+ if(token) headers.Authorization='Bearer '+token;
+ let response;
+ try{response=await fetch(API_BASE+path,{...options,headers})}
+ catch(e){throw new Error('Cannot reach the GODIA PRIME server. Check your internet connection and try again.')}
+ let data={};try{data=await response.json()}catch(e){}
+ if(!response.ok || data.ok===false) throw new Error(data.message||data.error||('Server request failed ('+response.status+').'));
+ return data;
+}
+function hasPosAccess(){return !!me && ['owner','admin','supplier','distributor','retailer','shopkeeper','cashier'].includes(String(me.role||'').toLowerCase())}
+function go(id){
+ const publicPages=['login','register','ownerSetup'];
+ if(!publicPages.includes(id) && (!token || !me)){document.body.classList.add('auth-required');id='login'}
+ if(id==='pos' && !hasPosAccess()){showUnavailable('POS access not enabled','Your account does not currently have an authorized cashier/business role. Ask the GODIA PRIME owner to assign the correct role after verification.');return}
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+ const el=$(id);if(!el){notify('Page unavailable');return}el.classList.add('active');
+ document.querySelectorAll('#bottomNav button').forEach(b=>b.classList.toggle('active',b.dataset.page===id||(id==='details'&&b.dataset.page==='marketplace')||(id==='tracking'&&b.dataset.page==='orders')));
+ document.querySelectorAll('#sideNav button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));
+ if(id==='cart')renderCart();if(id==='orders')loadOrders();if(id==='checkout')renderCheckoutSummary();if(id==='profile')renderProfile();if(id==='pos'){loadPosProducts();loadPosReport()}
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+function buildNav(){
+ const links=[['home','⌂','Home'],['marketplace','▦','Marketplace'],['cart','🛒','Cart'],['orders','▤','My orders']];
+ if(hasPosAccess())links.push(['pos','▣','POS / Cashier']);
+ $('sideNav').innerHTML=links.map(([id,ic,n])=>`<button class="navitem" data-page="${id}" onclick="go('${id}')"><span>${ic}</span><span>${n}</span></button>`).join('');
+}
+function showUnavailable(title,message){$('unavailableTitle').textContent=title;$('unavailableText').textContent=message;go('unavailable')}
+function saveCart(){localStorage.setItem(CART_KEY,JSON.stringify(cart))}
+function getPrice(p){return Number(p.price_minor||0)}
+function getDiscount(p){return Math.max(0,Math.min(100,Number(p.discount_percent||0)))}
+function getStock(p){return Number(p.stock_quantity||0)}
+function finalPrice(p){return Math.round(getPrice(p)*(1-getDiscount(p)/100))}
+function productImage(p){return p.image_url||'https://placehold.co/700x500/F4F6F9/0A1F44?text=GODIA+PRIME'}
+function productCard(p){
+ const stock=getStock(p),disc=getDiscount(p);
+ return `<article class="card p-2.5 product-card"><div class="relative"><img class="product-img" src="${escapeHtml(productImage(p))}" alt="${escapeHtml(p.name)}" loading="lazy" onerror="this.src='https://placehold.co/700x500/F4F6F9/0A1F44?text=Product'">${disc?`<span class="badge-discount">-${disc}%</span>`:''}</div><div class="pt-3"><p class="font-bold text-sm leading-snug min-h-10" style="color:var(--ink)">${escapeHtml(p.name)}</p><div class="mt-1">${disc?`<span class="text-xs muted line-through">${moneyMinor(getPrice(p))}</span>`:''}<div class="font-black text-base" style="color:#0E7A4D">${moneyMinor(finalPrice(p))}</div></div><div class="flex justify-between items-center mt-1 text-xs"><span class="muted">${escapeHtml(p.category||'General')}</span><span class="${stock>0?'text-emerald-700':'text-red-600'}">${stock>0?escapeHtml(stock)+' in stock':'Out of stock'}</span></div><div class="grid grid-cols-2 gap-2 mt-3"><button class="btn green !px-1 !text-xs" ${stock<=0?'disabled':''} onclick="addCart('${escapeHtml(p.id)}')">＋ Add</button><button class="btn outline !px-1 !text-xs" onclick="showDetails('${escapeHtml(p.id)}')">Details</button></div></div></article>`;
+}
+async function loadProducts(){
+ $('catalogueMessage').classList.add('hide');
+ try{
+  const data=await api('/api/products');
+  products=Array.isArray(data.products)?data.products:(Array.isArray(data.data)?data.data:[]);
+  renderProducts();buildCategories();
+  
+  if(!products.length){$('catalogueMessage').textContent='There are no products available at the moment. Please check again soon.';$('catalogueMessage').classList.remove('hide')}
+ }catch(e){
+  products=[];renderProducts();buildCategories();
+  $('catalogueMessage').textContent='We could not load products right now. Please check your connection and try again.';$('catalogueMessage').classList.remove('hide');
+ }
+}
+function renderProducts(){
+ const q=($('globalSearch')?.value||'').trim().toLowerCase();
+ let list=products.filter(p=>(filter==='All'||(p.category||'General')===filter)&&(`${p.name||''} ${p.category||''} ${p.sku||''}`).toLowerCase().includes(q));
+ const sort=$('sortProducts')?.value;if(sort==='low')list.sort((a,b)=>finalPrice(a)-finalPrice(b));if(sort==='high')list.sort((a,b)=>finalPrice(b)-finalPrice(a));
+ $('productGrid').innerHTML=list.length?list.map(productCard).join(''):'<p class="muted col-span-full py-10 text-center">No live products to display.</p>';
+ $('homeProducts').innerHTML=products.slice(0,4).map(productCard).join('')||'<p class="muted col-span-full">No products have been published yet.</p>';
+}
+function buildCategories(){
+ const cats=['All',...new Set(products.map(p=>p.category||'General'))];
+ $('categories').innerHTML=cats.filter(c=>c!=='All').map(c=>`<button class="card px-4 py-3 whitespace-nowrap text-sm font-bold" onclick="filter='${escapeHtml(c)}';go('marketplace');buildFilterOnly();renderProducts()">${escapeHtml(c)}</button>`).join('')||'<span class="muted text-sm">Categories will appear when products are published.</span>';
+ buildFilterOnly();
+}
+function buildFilterOnly(){$('filterChips').innerHTML=['All',...new Set(products.map(p=>p.category||'General'))].map(c=>`<button class="btn ${filter===c?'primary':'outline'} !min-h-10 !py-2 !px-4 whitespace-nowrap text-sm" onclick="filter='${escapeHtml(c)}';buildFilterOnly();renderProducts()">${escapeHtml(c)}</button>`).join('')}
+function showDetails(id){
+ currentProduct=products.find(p=>String(p.id)===String(id));if(!currentProduct)return;
+ const p=currentProduct,d=getDiscount(p),stock=getStock(p);
+ $('detailContent').innerHTML=`<div class="grid md:grid-cols-2 gap-6 card p-4 sm:p-6"><div><img class="w-full rounded-2xl object-cover" style="height:340px" src="${escapeHtml(productImage(p))}" alt="${escapeHtml(p.name)}"></div><div class="py-2"><span class="text-xs font-bold uppercase tracking-widest" style="color:#0E7A4D">${escapeHtml(p.category||'General')}</span><h1 class="text-2xl font-black mt-2" style="color:#0A1F44">${escapeHtml(p.name)}</h1><div class="mt-4">${d?`<span class="muted line-through">${moneyMinor(getPrice(p))}</span>`:''}<div class="text-3xl font-black" style="color:#0E7A4D">${moneyMinor(finalPrice(p))}</div></div><p class="mt-5 leading-relaxed">${escapeHtml(p.description||'No description has been provided.')}</p><p class="mt-4 text-sm font-bold ${stock>0?'text-emerald-700':'text-red-600'}">${stock>0?escapeHtml(stock)+' available':'Currently out of stock'}</p><button class="btn green w-full mt-6" ${stock<=0?'disabled':''} onclick="addCart('${escapeHtml(p.id)}')">＋ Add to Cart</button></div></div>`;
+ go('details');
+}
+function addCart(id){const p=products.find(x=>String(x.id)===String(id));if(!p||getStock(p)<=0){notify('This product is not currently available.');return}const current=Number(cart[id]||0);if(current+1>getStock(p)){notify('Quantity exceeds available stock.');return}cart[id]=current+1;saveCart();notify('Added to your cart.')}
+function cartEntries(){return Object.entries(cart).map(([id,q])=>({p:products.find(x=>String(x.id)===String(id)),q:Number(q)})).filter(x=>x.p&&x.q>0)}
+function cartSubtotal(){return cartEntries().reduce((s,x)=>s+finalPrice(x.p)*x.q,0)}
+function renderCart(){
+ const entries=cartEntries();
+ $('cartItems').innerHTML=entries.length?entries.map(({p,q})=>`<div class="card p-3 flex gap-3 items-center"><img src="${escapeHtml(productImage(p))}" class="w-20 h-20 object-cover rounded-xl"><div class="flex-1 min-w-0"><b class="text-sm" style="color:var(--ink)">${escapeHtml(p.name)}</b><div class="font-black mt-1" style="color:#0E7A4D">${moneyMinor(finalPrice(p))}</div><div class="flex items-center gap-2 mt-2"><button class="w-8 h-8 rounded-lg outline" onclick="changeQty('${escapeHtml(p.id)}',-1)">−</button><b>${q}</b><button class="w-8 h-8 rounded-lg outline" onclick="changeQty('${escapeHtml(p.id)}',1)">＋</button></div></div><button class="text-red-600 text-xl" onclick="removeCart('${escapeHtml(p.id)}')">×</button></div>`).join(''):'<div class="card p-8 text-center lg:col-span-2"><div class="text-4xl">🛒</div><h2 class="font-black mt-3" style="color:var(--ink)">Your cart is empty</h2><button class="btn green mt-4" onclick="go(\'marketplace\')">Browse products</button></div>';
+ $('cartSummary').innerHTML=`<div class="flex justify-between py-2 text-sm"><span>Estimated subtotal</span><b>${moneyMinor(cartSubtotal())}</b></div>`;
+}
+function changeQty(id,delta){const p=products.find(x=>String(x.id)===String(id));const next=Number(cart[id]||0)+delta;if(next<=0)delete cart[id];else if(p&&next<=getStock(p))cart[id]=next;else{notify('Quantity exceeds available stock.');return}saveCart();renderCart()}
+function removeCart(id){delete cart[id];saveCart();renderCart()}
+function startCheckout(){if(!cartEntries().length){notify('Your cart is empty.');return}if(!token){notify('Please sign in before checkout.');go('login');return}renderCheckoutSummary();go('checkout')}
+function renderCheckoutSummary(){$('checkoutSummary').innerHTML=`<div class="flex justify-between py-2 text-sm"><span>Estimated items</span><b>${moneyMinor(cartSubtotal())}</b></div>`}
+async function placeOrder(){
+ if(!token){notify('Sign in before placing an order.');go('login');return}
+ const name=$('deliveryName').value.trim(),phone=$('deliveryPhone').value.trim();
+ if(!name||!phone){notify('Enter the recipient name and phone number.');return}
+ const items=cartEntries().map(({p,q})=>({productId:p.id,quantity:q}));
+ if(!items.length){notify('Your cart is empty.');return}
+ const btn=$('placeOrderBtn');btn.disabled=true;btn.textContent='Submitting…';
+ try{
+  const data=await api('/api/orders',{method:'POST',body:JSON.stringify({items,customerName:name,customerPhone:phone,clientOrderId:crypto.randomUUID()})});
+  lastOrder=data.order||data.data||data;
+  const orderId=lastOrder.orderId||lastOrder.id||lastOrder.order_id||'Recorded';
+  $('orderNumber').textContent=orderId;
+  $('confirmedTotal').textContent=(lastOrder.totalMinor!=null?moneyMinor(lastOrder.totalMinor):((lastOrder.totalMinor!=null?moneyMinor(lastOrder.totalMinor):(lastOrder.total_minor!=null?moneyMinor(lastOrder.total_minor):'Total confirmed by server'))));
+  cart={};saveCart();$('deliveryName').value='';$('deliveryPhone').value='';
+  go('confirmation');notify('Order accepted. Payment has not been collected.');
+ }catch(e){notify(e.message)}
+ finally{btn.disabled=false;btn.textContent='Place order (payment pending)'}
+}
+async function loadOrders(){
+ $('ordersList').innerHTML='<div class="card p-5 muted">Loading orders…</div>';
+ if(!token){$('ordersList').innerHTML='<div class="card p-6 text-center">Please <button class="font-bold" style="color:#0E7A4D" onclick="go(\'login\')">sign in</button> to view your orders.</div>';return}
+ try{
+  const data=await api('/api/orders');const list=Array.isArray(data.orders)?data.orders:(Array.isArray(data.data)?data.data:[]);
+  $('ordersList').innerHTML=list.length?list.map(o=>`<div class="card p-4 flex flex-wrap justify-between items-center gap-3"><div><b style="color:var(--ink)">${escapeHtml(o.id)}</b><p class="muted text-xs mt-1">${escapeHtml(o.created_at||'')}</p><p class="text-sm font-bold mt-1" style="color:#0E7A4D">${o.total_minor!=null?moneyMinor(o.total_minor):'Amount unavailable'}</p></div><div class="text-right"><span class="status ${o.payment_status==='paid'?'good':'warn'}">${escapeHtml(o.payment_status||'not_paid')}</span><p class="text-xs mt-2">${escapeHtml(o.status||'pending')}</p><button class="text-sm font-bold mt-2" style="color:#0E7A4D" onclick="showOrder('${escapeHtml(o.id)}')">View details →</button></div></div>`).join(''):'<div class="card p-8 text-center muted">No orders have been recorded for this account.</div>';
+ }catch(e){$('ordersList').innerHTML=`<div class="card p-5 text-red-700">${escapeHtml(e.message)}</div>`}
+}
+async function showOrder(id){
+ try{const data=await api('/api/orders');const list=Array.isArray(data.orders)?data.orders:(Array.isArray(data.data)?data.data:[]);const o=list.find(x=>String(x.id)===String(id));if(!o){notify('Order not found in your account.');return}lastOrder=o;$('trackingContent').innerHTML=`<p><b>Order:</b> ${escapeHtml(o.id)}</p><p class="mt-2"><b>Status:</b> ${escapeHtml(o.status||'pending')}</p><p class="mt-2"><b>Payment:</b> ${escapeHtml(o.payment_status||'not_paid')}</p><p class="mt-2"><b>Total:</b> ${o.total_minor!=null?moneyMinor(o.total_minor):'Not supplied'}</p>`;go('tracking')}catch(e){notify(e.message)}
+}
+async function bootstrapOwner(){
+ const payload={fullName:$('ownerFullName').value.trim(),phone:$('ownerPhone').value.trim(),email:$('ownerEmail').value.trim(),password:$('ownerPassword').value,pin:$('ownerPin').value,bootstrapSecret:$('ownerBootstrapSecret').value};
+ if(!payload.fullName||!payload.phone||!payload.email||payload.password.length<8||!/^\d{4,8}$/.test(payload.pin)||!payload.bootstrapSecret){notify('Complete every owner setup field.');return}
+ const btn=$('ownerSetupBtn');btn.disabled=true;btn.textContent='Creating owner account…';
+ try{
+  const data=await api('/api/auth/bootstrap-owner',{method:'POST',body:JSON.stringify(payload)});
+  if(!data.token)throw new Error(data.message||'Owner setup did not return a secure session.');
+  token=data.token;localStorage.setItem(TOKEN_KEY,token);
+  if(!await loadMe())throw new Error('Owner account was created, but sign-in could not be verified.');
+  $('ownerBootstrapSecret').value='';document.body.classList.remove('auth-required');await loadProducts();go('home');notify('First owner account created successfully.');
+ }catch(e){notify(e.message)}
+ finally{btn.disabled=false;btn.textContent='Create first owner account →'}
+}
+
+async function login(){
+  const phone=$('loginPhone').value.trim(),pin=$('loginPin').value;
+  if(!phone||!pin){notify('Enter your phone number and PIN.');return}
+  const btn=$('loginBtn');btn.disabled=true;btn.textContent='Signing in…';
+ try{
+   const data=await api('/api/auth/login',{method:'POST',body:JSON.stringify({identifier:phone,secret:pin})});
+   if(!data.token)throw new Error('The server did not return a login token.');
+   token=data.token;localStorage.setItem(TOKEN_KEY,token);me=data.user||null;
+   if(!await loadMe())throw new Error('Your session could not be verified. Please sign in again.');
+   document.body.classList.remove('auth-required');await loadProducts();go('home');notify('Signed in successfully.');
+  }catch(e){notify(e.message)}
+  finally{btn.disabled=false;btn.textContent='Login securely'}
+}
+
+
+
+/* POS cashier client. Server remains authoritative for prices, permissions and stock. */
+let posProducts=[],posCart={},posLastSale=null,posPendingClientSaleId=localStorage.getItem('gp_pos_pending_sale')||null;
+const posMoney=n=>moneyMinor(n);
+function canUsePos(){return hasPosAccess()}
+function focusPosSearch(){$('posSearch')?.focus()}
+function handlePosScan(event){if(event.key!=='Enter')return;event.preventDefault();const code=String($('posSearch').value||'').trim().toLowerCase();if(!code)return;const p=posProducts.find(x=>String(x.sku||'').trim().toLowerCase()===code);if(!p){notify('No product matches that barcode/SKU.');return}addPosProduct(p.id);$('posSearch').value='';renderPosProducts()}
+function announcePosSuccess(){try{if('speechSynthesis'in window){const u=new SpeechSynthesisUtterance('Sale successful');u.rate=0.95;window.speechSynthesis.speak(u)}}catch(e){}}
+async function loadPosProducts(){
+ if(!canUsePos())return;
+ $('posProductGrid').innerHTML='<div class="muted p-5">Loading your products…</div>';
+ try{const data=await api('/api/pos/products');posProducts=Array.isArray(data.products)?data.products:[];renderPosProducts()}
+ catch(e){$('posProductGrid').innerHTML=`<div class="card p-4 text-red-700 col-span-full">${escapeHtml(e.message)}</div>`}
+}
+function renderPosProducts(){
+ const q=String($('posSearch')?.value||'').trim().toLowerCase();
+ const list=posProducts.filter(p=>!q||[p.name,p.sku,p.category].some(v=>String(v||'').toLowerCase().includes(q)));
+ $('posProductGrid').innerHTML=list.length?list.map(p=>{const stock=getStock(p),price=finalPrice(p);return `<button type="button" class="card p-3 text-left" onclick="addPosProduct('${escapeHtml(p.id)}')" ${stock<1?'disabled':''}><div class="font-bold text-sm" style="color:#0B6E4F">${escapeHtml(p.name)}</div><div class="font-black mt-2" style="color:#FFC107">${posMoney(price)}</div><div class="text-xs mt-1 ${stock>0?'text-green-700':'text-red-600'}">${stock>0?stock+' in stock':'Out of stock'}</div><div class="text-xs muted mt-1">SKU: ${escapeHtml(p.sku||'—')}</div></button>`}).join(''):'<div class="card p-5 muted col-span-full">No matching products in your business stock.</div>';
+}
+function addPosProduct(id){const p=posProducts.find(x=>String(x.id)===String(id));if(!p)return;const next=Number(posCart[id]||0)+1;if(next>getStock(p)){notify('That quantity is more than available stock.');return}posCart[id]=next;renderPosCart()}
+function changePosQty(id,delta){const p=posProducts.find(x=>String(x.id)===String(id));const next=Math.round((Number(posCart[id]||0)+delta)*1000)/1000;if(next<=0)delete posCart[id];else if(p&&next<=getStock(p))posCart[id]=next;else{notify('Quantity exceeds available stock.');return}renderPosCart()}
+function setPosQty(id,value){const p=posProducts.find(x=>String(x.id)===String(id));const next=Number(value);if(!Number.isFinite(next)||next<=0){delete posCart[id];renderPosCart();return}if(!p||next>getStock(p)||Math.abs(next*1000-Math.round(next*1000))>1e-7){notify('Enter a quantity up to available stock, using at most 3 decimal places.');renderPosCart();return}posCart[id]=Math.round(next*1000)/1000;renderPosCart()}
+function clearPosCart(){posCart={};renderPosCart()}
+function posLineTotal(product,quantity){return Math.round(getPrice(product)*quantity*(1-getDiscount(product)/100))}
+function posCartLines(){return Object.entries(posCart).map(([id,quantity])=>({product:posProducts.find(p=>String(p.id)===String(id)),quantity:Number(quantity)})).filter(x=>x.product&&x.quantity>0)}
+function posCartTotal(){return posCartLines().reduce((sum,x)=>sum+posLineTotal(x.product,x.quantity),0)}
+function renderPosCart(){const lines=posCartLines();$('posCartLines').innerHTML=lines.length?lines.map(({product,quantity})=>`<div class="flex items-center gap-2 border-b py-2"><div class="flex-1 min-w-0"><div class="font-bold text-sm">${escapeHtml(product.name)}</div><div class="text-xs muted">${posMoney(getPrice(product))} per ${escapeHtml(product.unit||'unit')}</div><input aria-label="Quantity for ${escapeHtml(product.name)}" type="number" min="0.001" step="0.001" max="${getStock(product)}" value="${quantity}" class="field mt-1" style="max-width:120px;min-height:34px;padding:5px" onchange="setPosQty('${escapeHtml(product.id)}',this.value)"></div><button class="w-8 h-8 rounded-lg border" aria-label="Decrease quantity" onclick="changePosQty('${escapeHtml(product.id)}',-1)">−</button><button class="w-8 h-8 rounded-lg border" aria-label="Increase quantity" onclick="changePosQty('${escapeHtml(product.id)}',1)">+</button><b class="text-sm">${posMoney(posLineTotal(product,quantity))}</b></div>`).join(''):'<p class="muted text-sm py-4">No products added yet.</p>';renderPosTotals()}
+function renderPosTotals(){const total=posCartTotal();$('posSubtotal').textContent=posMoney(total);$('posTotal').textContent=posMoney(total);const cash=Math.round(Number($('posCashReceived')?.value||0)*100);$('posChange').textContent=posMoney(Math.max(0,cash-total))}
+function updatePosPaymentFields(){const cash=$('posPaymentMethod').value==='cash';$('posCashFields').classList.toggle('hide',!cash);$('posMpesaFields').classList.toggle('hide',cash);renderPosTotals()}
+function localPosDate(){const d=new Date(Date.now()+3*60*60*1000);return d.toISOString().slice(0,10)}
+async function loadPosReport(){if(!canUsePos())return;const date=$('posReportDate').value||localPosDate();$('posReportDate').value=date;try{const data=await api('/api/pos/sales?date='+encodeURIComponent(date));const s=data.summary||{};$('posTodayTotal').textContent=posMoney(s.daily_total_minor);$('posTodayCount').textContent=(s.sale_count||0)+' sales';$('posCashTotal').textContent=posMoney(s.cash_total_minor);$('posMpesaTotal').textContent=posMoney(s.mpesa_till_total_minor);const rows=data.sales||[];$('posSalesRows').innerHTML=rows.length?rows.map(x=>`<tr class="border-b"><td class="py-2"><button class="font-bold" style="color:#0B6E4F" onclick="viewPosReceipt('${escapeHtml(x.id)}')">${escapeHtml(x.id.slice(-10))}</button></td><td>${new Date(x.created_at+'Z').toLocaleTimeString('en-KE',{hour:'2-digit',minute:'2-digit'})}</td><td>${x.payment_method==='cash'?'Cash':'M-PESA Till'}<div class="text-xs ${x.payment_status==='paid'?'text-green-700':'text-red-600'}">${x.payment_status==='paid'?'Paid':'Unverified'}</div></td><td class="text-right font-bold">${posMoney(x.total_minor)}</td></tr>`).join(''):'<tr><td colspan="4" class="py-4 muted">No sales recorded for this date.</td></tr>'}
+ catch(e){$('posSalesRows').innerHTML=`<tr><td colspan="4" class="py-4 text-red-700">${escapeHtml(e.message)}</td></tr>`}}
+async function completePosSale(){const lines=posCartLines();if(!lines.length){notify('Add at least one product first.');return}const method=$('posPaymentMethod').value;const total=posCartTotal();const cashMinor=Math.round(Number($('posCashReceived').value||0)*100);if(method==='cash'&&cashMinor<total){notify('Cash received is less than the sale total.');return}const btn=$('posCompleteBtn');btn.disabled=true;btn.textContent='Saving sale…';try{if(!posPendingClientSaleId){posPendingClientSaleId=crypto.randomUUID();localStorage.setItem('gp_pos_pending_sale',posPendingClientSaleId)}const result=await api('/api/pos/sales',{method:'POST',body:JSON.stringify({clientSaleId:posPendingClientSaleId,customerName:$('posCustomerName').value.trim()||'Walk-in customer',customerPhone:$('posCustomerPhone').value.trim(),paymentMethod:method,amountReceivedMinor:method==='cash'?cashMinor:total,mpesaReceipt:$('posMpesaReceipt').value.trim(),items:lines.map(x=>({productId:x.product.id,quantity:x.quantity}))})});posLastSale=result.sale||null;if(result.duplicate&&posLastSale?.id){const full=await api('/api/pos/sales/'+encodeURIComponent(posLastSale.id));posLastSale=full.sale||posLastSale}posPendingClientSaleId=null;localStorage.removeItem('gp_pos_pending_sale');posCart={};$('posCashReceived').value='';$('posMpesaReceipt').value='';$('posCustomerPhone').value='';$('posCustomerName').value='Walk-in customer';renderPosCart();await loadPosProducts();await loadPosReport();if(posLastSale)showPosReceipt(posLastSale);if(method==='cash'||result.sale?.paymentStatus==='paid')announcePosSuccess();notify(result.message||'Sale recorded.')}
+ catch(e){notify(e.message);await loadPosProducts()}
+ finally{btn.disabled=false;btn.textContent='Complete sale'}}
+function showPosReceipt(sale){posLastSale=sale;const rows=(sale.items||[]).map(x=>`<tr><td class="py-1">${escapeHtml(x.product_name)}</td><td class="text-center">${x.quantity}</td><td class="text-right">${posMoney(x.line_total_minor)}</td></tr>`).join('');const method=sale.payment_method||sale.paymentMethod;const status=sale.payment_status||sale.paymentStatus;const received=sale.amount_received_minor??sale.amountReceivedMinor;const change=sale.change_minor??sale.changeMinor;$('posReceiptContent').innerHTML=`<div id="posPrintableReceipt" style="font-family:Arial,sans-serif;color:#000;max-width:420px;margin:auto;padding:12px"><h2 style="text-align:center;color:#0B6E4F;font-weight:900">GODIA PRIME</h2><p style="text-align:center;font-size:12px">CONNECT SOLUTIONS • SALES RECEIPT</p><hr><p class="text-xs">Receipt: ${escapeHtml(sale.id)}</p><p class="text-xs">Date: ${escapeHtml(sale.created_at||sale.createdAt||new Date().toISOString())}</p><p class="text-xs">Customer: ${escapeHtml(sale.customer_name||sale.customerName||'Walk-in customer')}</p><table style="width:100%;font-size:12px;border-collapse:collapse;margin-top:10px"><thead><tr><th align="left">Item</th><th>Qty</th><th align="right">Total</th></tr></thead><tbody>${rows}</tbody></table><hr><p style="font-weight:bold">Total: ${posMoney(sale.total_minor??sale.totalMinor)}</p><p class="text-xs">Method: ${method==='cash'?'Cash':'M-PESA Till'}</p><p class="text-xs">Payment: ${status==='paid'?'PAID':'RECORDED — VERIFY TILL'}</p>${method==='cash'?`<p class="text-xs">Received: ${posMoney(received)}<br>Change: ${posMoney(change)}</p>`:''}<p style="text-align:center;font-size:11px;margin-top:14px">Thank you for shopping with GODIA PRIME</p></div>`;$('posReceiptPanel').classList.remove('hide');$('posReceiptPanel').scrollIntoView({behavior:'smooth',block:'start'})}
+function printPosReceipt(){const content=$('posPrintableReceipt')?.innerHTML;if(!content){notify('There is no receipt to print.');return}const w=window.open('','_blank','width=440,height=700');if(!w){notify('Allow pop-ups to print the receipt.');return}w.document.write('<!doctype html><html><head><title>GODIA PRIME Receipt</title><meta name="viewport" content="width=device-width, initial-scale=1"><style>body{font-family:Arial,sans-serif;padding:12px;color:#000}table{width:100%}th,td{padding:5px 2px;border-bottom:1px solid #ddd}</style></head><body>'+content+'</body></html>');w.document.close();w.focus();w.print()}
+function sharePosReceipt(){if(!posLastSale){notify('There is no receipt to share.');return}const phone=String(posLastSale.customer_phone||posLastSale.customerPhone||'').replace(/\D/g,'');if(!phone){notify('Enter the customer phone number before the sale to share the receipt on WhatsApp.');return}const items=(posLastSale.items||[]).map(x=>`${x.product_name} x${x.quantity}: ${posMoney(x.line_total_minor)}`).join('\n');const status=(posLastSale.payment_status||posLastSale.paymentStatus)==='paid'?'PAID':'M-PESA TILL RECORDED — VERIFY';const message=`GODIA PRIME CONNECT SOLUTIONS\nSALES RECEIPT\nReceipt: ${posLastSale.id}\n${items}\nTotal: ${posMoney(posLastSale.total_minor??posLastSale.totalMinor)}\nPayment: ${status}\nThank you for shopping with us.`;window.open('https://wa.me/'+phone+'?text='+encodeURIComponent(message),'_blank')}
+
+async function viewPosReceipt(id){try{const data=await api('/api/pos/sales/'+encodeURIComponent(id));showPosReceipt(data.sale)}catch(e){notify(e.message)}}
+
+// Kenya's devolved electoral hierarchy: 47 counties -> 290 constituencies -> 1,450 wards.
+// The records are from the kenya-regions dataset, whose county/constituency/ward
+// backbone is sourced from IEBC. Administrative sub-counties are a different system.
+const KENYA_DATA_URLS={
+ counties:'https://raw.githubusercontent.com/nicanor-korir/kenya-regions/main/data/counties.json',
+ constituencies:'https://raw.githubusercontent.com/nicanor-korir/kenya-regions/main/data/constituencies.json',
+ wards:'https://raw.githubusercontent.com/nicanor-korir/kenya-regions/main/data/wards.json'
+};
+let kenyaDivisions={counties:[],constituencies:[],wards:[],loaded:false,error:''};
+const normRegion=v=>String(v??'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
+async function fetchRegionFile(url){
+ const response=await fetch(url,{headers:{Accept:'application/json'},cache:'force-cache'});
+ if(!response.ok)throw new Error('Location directory returned '+response.status);
+ const data=await response.json();
+ if(!Array.isArray(data))throw new Error('The Kenya location directory returned an unexpected format.');
+ return data;
+}
+async function loadKenyaDivisions(){
+ try{
+  const [counties,constituencies,wards]=await Promise.all([
+   fetchRegionFile(KENYA_DATA_URLS.counties),fetchRegionFile(KENYA_DATA_URLS.constituencies),fetchRegionFile(KENYA_DATA_URLS.wards)
+  ]);
+  if(counties.length!==47||constituencies.length!==290||wards.length!==1450)
+   throw new Error('The location directory did not pass the expected 47/290/1,450 record check.');
+  kenyaDivisions={counties,constituencies,wards,loaded:true,error:''};
+  ['customer','agent'].forEach(prefix=>{
+   const county=$(prefix+'County');
+   if(county){const selected=county.value;county.innerHTML='<option value="">Select your county</option>';
+    counties.slice().sort((a,b)=>a.code-b.code).forEach(c=>county.add(new Option(c.name,c.name)));
+    county.value=counties.some(c=>normRegion(c.name)===normRegion(selected))?counties.find(c=>normRegion(c.name)===normRegion(selected)).name:'';
+    county.dispatchEvent(new Event('change'));
+   }
+  });
+  return true;
+ }catch(err){
+  kenyaDivisions.loaded=false;kenyaDivisions.error=err.message||'Unable to load the Kenya location directory.';
+  ['customer','agent'].forEach(prefix=>{
+   const c=$(prefix+'Constituency'),w=$(prefix+'Ward');
+   if(c){c.innerHTML='<option value="">Location directory unavailable — retry</option>';c.disabled=true}
+   if(w){w.innerHTML='<option value="">Select constituency first</option>';w.disabled=true}
+  });
+  notify('Could not load the verified Kenya location list. Check your internet and retry.');
+  return false;
+ }
+}
+function updateBusinessRoleHelp(){
+ const selector=$('agentAccountType');
+ const help=$('businessRoleHelp');
+ if(!selector||!help)return;
+ const guidance={
+  agent:'Agent: a local representative who helps customers and businesses connect, place enquiries and coordinate services. Identity and traceable contact details are required for verification.',
+  supplier:'Supplier: a person or business that provides products or services to GODIA PRIME customers or approved business partners. Add accurate business, identity and product details so orders and complaints can be followed up.',
+  distributor:'Distributor: a person or business responsible for supplying or moving products across an agreed area. Provide your operating area, business contacts and identification details for verification.'
+ };
+ help.textContent=guidance[selector.value]||guidance.agent;
+}
+
+function setupLocationSelectors(prefix){
+ const county=$(prefix+'County'),constituency=$(prefix+'Constituency'),ward=$(prefix+'Ward');
+ if(!county||!constituency||!ward)return;
+ county.addEventListener('change',()=>{
+  const selected=kenyaDivisions.counties.find(x=>normRegion(x.name)===normRegion(county.value));
+  constituency.innerHTML='<option value="">Select constituency</option>';
+  ward.innerHTML='<option value="">Select constituency first</option>';ward.disabled=true;
+  if(!selected||!kenyaDivisions.loaded){constituency.disabled=true;return}
+  const options=kenyaDivisions.constituencies.filter(x=>Number(x.countyCode)===Number(selected.code)).sort((a,b)=>a.code-b.code);
+  options.forEach(x=>constituency.add(new Option(x.name,String(x.code))));
+  constituency.disabled=!options.length;
+  if(!options.length)constituency.innerHTML='<option value="">No constituency records found — contact support</option>';
+ });
+ constituency.addEventListener('change',()=>{
+  const selected=kenyaDivisions.constituencies.find(x=>String(x.code)===String(constituency.value));
+  ward.innerHTML='<option value="">Select ward</option>';ward.disabled=true;
+  if(!selected)return;
+  const options=kenyaDivisions.wards.filter(x=>Number(x.constituencyCode)===Number(selected.code)).sort((a,b)=>a.code-b.code);
+  options.forEach(x=>ward.add(new Option(x.name,String(x.code))));
+  ward.disabled=!options.length;
+  if(!options.length)ward.innerHTML='<option value="">No ward records found — contact support</option>';
+ });
+}
+setupLocationSelectors('customer');
+setupLocationSelectors('agent');
+$('agentAccountType')?.addEventListener('change',updateBusinessRoleHelp);
+updateBusinessRoleHelp();
+function showRegistrationForm(type){
+  $('registerChoice').classList.add('hide');
+  $('customerRegistrationForm').classList.toggle('hide',type!=='customer');
+  $('agentRegistrationForm').classList.toggle('hide',type!=='agent');
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(!kenyaDivisions.loaded)loadKenyaDivisions();
+}
+function backToRegistrationChoice(){
+  $('customerRegistrationForm').classList.add('hide');
+  $('agentRegistrationForm').classList.add('hide');
+  $('registerChoice').classList.remove('hide');
+}
+async function registerAccount(type){
+  const isBusiness=type!=='customer';
+  const prefix=isBusiness?'agent':'customer';
+  const fullName=$(prefix==='agent'?'agentName':'customerName').value.trim();
+  const phone=$(prefix+'Phone').value.trim();
+  const pin=$(prefix+'Pin').value;
+  const email=$(prefix==='agent'?'agentEmail':'customerEmail').value.trim();
+  const password=$(prefix==='agent'?'agentPassword':'customerPassword').value;
+  const county=$(prefix+'County').value;
+  const countyRecord=kenyaDivisions.counties.find(x=>normRegion(x.name)===normRegion(county));
+  const constituencySelect=$(prefix+'Constituency');
+  const wardSelect=$(prefix+'Ward');
+  const constituency=constituencySelect.options[constituencySelect.selectedIndex]?.text||'';
+  const ward=wardSelect.options[wardSelect.selectedIndex]?.text||'';
+  const constituencyId=constituencySelect.value,wardId=wardSelect.value;
+  const constituencyRecord=kenyaDivisions.constituencies.find(x=>String(x.code)===String(constituencyId));
+  const wardRecord=kenyaDivisions.wards.find(x=>String(x.code)===String(wardId));
+  const locality=$(prefix+'Locality').value.trim();
+  if(type==='customer'&&!$('customerPrivacyConsent').checked){notify('Please acknowledge the privacy notice before continuing.');return}
+  if(!kenyaDivisions.loaded){notify('The Kenya location directory is not ready. Please retry.');await loadKenyaDivisions();return}
+  if(!fullName||!phone||!email||password.length<8||!/^\d{4,8}$/.test(pin)||!countyRecord||!constituencyRecord||!wardRecord||!locality){
+    notify('Complete all required fields and select the correct county, constituency and ward.');return;
+  }
+  let payload={
+    name:fullName,fullName,email,phone,password,pin,accountType:type,role:type,county,constituency,ward,
+    countyCode:countyRecord.code,constituencyId,wardId,wardCode:wardRecord.code,locality,privacyConsent:type==='customer'?true:false
+  };
+  if(isBusiness){
+    const businessName=$('agentBusinessName').value.trim();
+    const businessType=$('agentBusinessType').value;
+    const idType=$('agentIdType').value,idNumber=$('agentIdNumber').value.trim();
+    const email=$('agentEmail').value.trim(),kraPin=$('agentKraPin').value.trim();
+    const permitNumber=$('agentPermitNumber').value.trim();
+    const businessAddress=$('agentBusinessAddress').value.trim();
+    const yearsOperating=$('agentYearsOperating').value;
+    const referencePhone=$('agentReferencePhone').value.trim();
+    const productsServices=$('agentProductsServices').value.trim();
+    const coverage=$('agentCoverage').value.trim();
+    const consent=$('agentVerificationConsent').checked;
+    const accountType=$('agentAccountType').value;
+    payload.privacyConsent=true;
+    if(!businessName||!businessType||!idType||!idNumber||!email||!businessAddress||!yearsOperating||!productsServices||!coverage||!consent){
+      notify('Complete all required business verification fields and confirm the declaration.');return;
+    }
+    payload={
+      ...payload,accountType,role:accountType,businessName,businessType,idType,idNumber,kraPin:kraPin||null,
+      permitNumber:permitNumber||null,businessAddress,yearsOperating,referencePhone,productsServices,coverage,verificationConsent:consent
+    };
+  }
+  const btn=$(isBusiness?'agentRegisterBtn':'customerRegisterBtn');
+  btn.disabled=true;btn.textContent='Submitting registration…';
+  try{
+    const data=await api('/api/auth/register',{method:'POST',body:JSON.stringify(payload)});
+    notify(data.message || (data.applicationStatus==='pending' ? 'Business application submitted for verification.' : 'Account created. Please sign in.'));
+    $('loginPhone').value=phone;$('loginPin').value='';
+    backToRegistrationChoice();go('login');
+  }catch(e){notify(e.message)}
+  finally{
+    btn.disabled=false;
+    btn.innerHTML=isBusiness?'Submit business registration <span>→</span>':'Create customer account <span>→</span>';
+  }
+}
+
+async function loadMe(){
+ if(!token){me=null;renderProfile();return false}
+ try{const data=await api('/api/me');me=data.user||data;if(!me)throw new Error('Invalid session');renderProfile();buildNav();$('greeting').textContent='Welcome, '+(me.full_name||me.name||'customer');return true}
+ catch(e){token='';me=null;localStorage.removeItem(TOKEN_KEY);renderProfile();return false}
+}
+function renderProfile(){
+ $('profileName').textContent=me?(me.full_name||me.name||'GODIA PRIME customer'):'Not signed in';
+ $('profileMeta').textContent=me?(me.phone||me.email||'Account active'):'Sign in to view your account';
+ $('profileRole').textContent=me?'Account role: '+(me.role||'customer'):'';
+}
+function logout(){token='';me=null;products=[];localStorage.removeItem(TOKEN_KEY);buildNav();renderProfile();document.body.classList.add('auth-required');go('login');notify('You have signed out.')}
+function toggleTheme(){document.body.classList.toggle('dark');const dark=document.body.classList.contains('dark');$('themeLabel').textContent=dark?'Dark mode':'Light mode';localStorage.setItem('gp_dark',dark?'1':'0')}
+async function init(){
+ buildNav();
+ if($('posReportDate'))$('posReportDate').value=localPosDate();
+ if(localStorage.getItem('gp_dark')==='1'){document.body.classList.add('dark');$('themeLabel').textContent='Dark mode'}
+ if(token && await loadMe()){document.body.classList.remove('auth-required');await loadProducts();go('home')}
+ else{token='';me=null;localStorage.removeItem(TOKEN_KEY);document.body.classList.add('auth-required');go('login')}
+ try{const setup=await api('/api/setup/status');$('ownerSetupLink').classList.toggle('hide',!(setup.ownerSetupAvailable&&setup.bootstrapEnabled))}catch{$('ownerSetupLink').classList.add('hide')}
+ $('splash').style.display='none';
+}
+window.addEventListener('pageshow',()=>{if(!token||!me){document.body.classList.add('auth-required');go('login')}});
+init();
+</script>
+
+<script>
+// GODIA PRIME CONNECT install and PWA setup.
+(() => {
+  let deferredInstallPrompt = null;
+  const installButton = document.getElementById('pwaInstallButton');
+  const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  if (isStandalone()) installButton.style.display = 'none';
+
+  window.addEventListener('beforeinstallprompt', (event) => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+    installButton.style.display = 'flex';
+    installButton.textContent = '⬇ Install App';
+  });
+
+  window.addEventListener('appinstalled', () => {
+    deferredInstallPrompt = null;
+    installButton.style.display = 'none';
+  });
+
+  installButton.addEventListener('click', async () => {
+    if (isStandalone()) {
+      installButton.style.display = 'none';
+      return;
+    }
+    if (deferredInstallPrompt) {
+      deferredInstallPrompt.prompt();
+      await deferredInstallPrompt.userChoice;
+      deferredInstallPrompt = null;
+      return;
+    }
+    const ua = navigator.userAgent || '';
+    if (/iPhone|iPad|iPod/i.test(ua)) {
+      alert('To install GODIA PRIME CONNECT on iPhone/iPad: open this page in Safari, tap Share, choose Add to Home Screen, then tap Add.');
+    } else if (/Android/i.test(ua)) {
+      alert('To install GODIA PRIME CONNECT: open this page in Chrome or Samsung Internet, tap the browser menu (⋮), choose Install app or Add to Home screen, then confirm.');
+    } else {
+      alert('To install GODIA PRIME CONNECT on your computer: open this site in Chrome or Edge, then use the Install icon in the address bar or the browser menu and choose Install app.');
+    }
+  });
+
+  if ('serviceWorker' in navigator && location.protocol === 'https:') {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js', { scope: './' }).catch((error) => {
+        console.warn('GODIA PRIME service worker registration failed:', error);
+      });
+    });
+  }
+})();
+</script>
+
+</body>
+</html>
