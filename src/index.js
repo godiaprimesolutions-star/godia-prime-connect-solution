@@ -1,66 +1,88 @@
+
 /**
  * GODIA PRIME CONNECT SOLUTIONS
- * API ENGINE V2.1 - PHONE/PASSWORD LOGIN
+ * API ENGINE V2.2 - PHONE/PASSWORD LOGIN + POS V2
  * Cloudflare Workers + D1 + M-PESA Daraja
  *
  * Google sign-in is intentionally disabled.
- * Existing D1 tables and records are not modified or deleted by deployment.
+ * Existing D1 tables and records are preserved.
+ * POS V2 uses pos_sales_v2 and pos_sale_items_v2.
+ * Legacy POS tables are deliberately untouched.
  */
+
 const JSON_HEADERS = {
   "content-type": "application/json; charset=utf-8",
   "cache-control": "no-store"
 };
+
 const uid = (prefix = "") => prefix + crypto.randomUUID();
 const nowIso = () => new Date().toISOString();
+
 function json(data, status = 200, headers = {}) {
   return new Response(JSON.stringify(data), {
     status,
     headers: { ...JSON_HEADERS, ...headers }
   });
 }
+
 function corsHeaders(req, env) {
   const origin = req.headers.get("Origin");
   const allowed = String(env.FRONTEND_ORIGIN || "*")
     .split(",")
     .map(x => x.trim());
+
   return {
     "access-control-allow-origin":
-      allowed.includes("*") ? "*" : (allowed.includes(origin) ? origin : "null"),
+      allowed.includes("*")
+        ? "*"
+        : (allowed.includes(origin) ? origin : "null"),
     "access-control-allow-methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
     "access-control-allow-headers": "Content-Type, Authorization",
     "access-control-max-age": "86400",
     "vary": "Origin"
   };
 }
+
 function b64url(bytes) {
   return btoa(String.fromCharCode(...new Uint8Array(bytes)))
     .replace(/=/g, "")
     .replace(/\+/g, "-")
     .replace(/\//g, "_");
 }
+
 function fromB64url(value) {
   const s = value.replace(/-/g, "+").replace(/_/g, "/");
+
   return Uint8Array.from(
     atob(s + "=".repeat((4 - s.length % 4) % 4)),
     c => c.charCodeAt(0)
   );
 }
+
 async function signToken(user, env) {
   if (!env.JWT_SECRET || env.JWT_SECRET.length < 32) {
     throw new Error("JWT_SECRET must contain at least 32 characters");
   }
+
   const header = b64url(
-    new TextEncoder().encode(JSON.stringify({ alg: "HS256", typ: "JWT" }))
+    new TextEncoder().encode(
+      JSON.stringify({ alg: "HS256", typ: "JWT" })
+    )
   );
+
   const payload = b64url(
-    new TextEncoder().encode(JSON.stringify({
-      sub: user.id,
-      role: user.role || "customer",
-      email: user.email || null,
-      exp: Math.floor(Date.now() / 1000) + 604800
-    }))
+    new TextEncoder().encode(
+      JSON.stringify({
+        sub: user.id,
+        role: user.role || "customer",
+        email: user.email || null,
+        exp: Math.floor(Date.now() / 1000) + 604800
+      })
+    )
   );
+
   const data = `${header}.${payload}`;
+
   const key = await crypto.subtle.importKey(
     "raw",
     new TextEncoder().encode(env.JWT_SECRET),
@@ -68,6 +90,7 @@ async function signToken(user, env) {
     false,
     ["sign"]
   );
+
   const signature = await crypto.subtle.sign(
     "HMAC",
     key,
@@ -95,7 +118,10 @@ async function auth(req, env) {
       new TextDecoder().decode(fromB64url(header))
     );
 
-    if (decodedHeader.alg !== "HS256" || decodedHeader.typ !== "JWT") {
+    if (
+      decodedHeader.alg !== "HS256" ||
+      decodedHeader.typ !== "JWT"
+    ) {
       return null;
     }
 
@@ -131,10 +157,12 @@ async function auth(req, env) {
     const user = await env.DB.prepare(`
       SELECT id,email,phone,full_name,role,status,
       subscription_plan,subscription_status,subscription_expires_at
-      FROM users WHERE id=?
+      FROM users
+      WHERE id=?
     `).bind(data.sub).first();
 
     return user?.status === "active" ? user : null;
+
   } catch {
     return null;
   }
@@ -164,6 +192,7 @@ async function hashPassword(password) {
 async function verifyPassword(password, stored) {
   try {
     const [salt, expected] = String(stored || "").split(".");
+
     if (!salt || !expected) return false;
 
     const key = await crypto.subtle.importKey(
@@ -186,6 +215,7 @@ async function verifyPassword(password, stored) {
 
     return actual.length === calculated.length &&
       actual.every((v, i) => v === calculated[i]);
+
   } catch {
     return false;
   }
@@ -200,9 +230,54 @@ async function body(req) {
   }
 }
 
+/* Read a POS V2 receipt and its items. */
+async function readPosSale(db, saleId, sellerId = null) {
+  let sale;
+
+  if (sellerId) {
+    sale = await db.prepare(`
+      SELECT *
+      FROM pos_sales_v2
+      WHERE id=? AND seller_id=?
+    `).bind(saleId, sellerId).first();
+
+  } else {
+    sale = await db.prepare(`
+      SELECT *
+      FROM pos_sales_v2
+      WHERE id=?
+    `).bind(saleId).first();
+  }
+
+  if (!sale) return null;
+
+  const result = await db.prepare(`
+    SELECT
+      id,
+      product_id,
+      product_name,
+      sku,
+      quantity,
+      unit_price_minor,
+      discount_percent,
+      line_total_minor,
+      created_at
+    FROM pos_sale_items_v2
+    WHERE sale_id=?
+    ORDER BY rowid
+  `).bind(saleId).all();
+
+  return {
+    ...sale,
+    items: result.results || []
+  };
+}
+
 /* Kenyan phone normalization: database values are stored as +254... */
 function normalizeKenyanPhone(value) {
-  let phone = String(value || "").trim().replace(/[\s()-]/g, "");
+  let phone = String(value || "")
+    .trim()
+    .replace(/[\s()-]/g, "");
 
   if (phone.startsWith("00")) {
     phone = "+" + phone.slice(2);
@@ -227,7 +302,8 @@ function normalizeKenyanPhone(value) {
 
 /* M-PESA DARAJA */
 function normalizeMpesaPhone(value) {
-  let phone = String(value || "").replace(/[\s+()-]/g, "");
+  let phone = String(value || "")
+    .replace(/[\s+()-]/g, "");
 
   if (phone.startsWith("0")) {
     phone = "254" + phone.slice(1);
@@ -267,7 +343,9 @@ async function darajaAccessToken(env) {
   const response = await fetch(
     "https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials",
     {
-      headers: { Authorization: `Basic ${credentials}` }
+      headers: {
+        Authorization: `Basic ${credentials}`
+      }
     }
   );
 
@@ -354,7 +432,10 @@ async function startSubscriptionPayment(req, env) {
   const user = await auth(req, env);
 
   if (!user) {
-    return json({ ok: false, message: "Please sign in first" }, 401);
+    return json({
+      ok: false,
+      message: "Please sign in first"
+    }, 401);
   }
 
   const b = await body(req);
@@ -369,7 +450,10 @@ async function startSubscriptionPayment(req, env) {
   const variable = plans[plan];
 
   if (!variable) {
-    return json({ ok: false, message: "Invalid subscription plan" }, 400);
+    return json({
+      ok: false,
+      message: "Invalid subscription plan"
+    }, 400);
   }
 
   const amount = Number(env[variable]);
@@ -386,7 +470,10 @@ async function startSubscriptionPayment(req, env) {
   try {
     phone = normalizeMpesaPhone(b.phone || user.phone);
   } catch (error) {
-    return json({ ok: false, message: error.message }, 400);
+    return json({
+      ok: false,
+      message: error.message
+    }, 400);
   }
 
   const paymentId = uid("pay_");
@@ -394,7 +481,10 @@ async function startSubscriptionPayment(req, env) {
 
   await env.DB.prepare(`
     INSERT INTO payment_transactions
-    (id,user_id,purpose,plan,phone,amount_kes,checkout_request_id,status,response_description)
+    (
+      id,user_id,purpose,plan,phone,amount_kes,
+      checkout_request_id,status,response_description
+    )
     VALUES(?,?,?,?,?,?,?,?,?)
   `).bind(
     paymentId,
@@ -480,7 +570,8 @@ async function handleDarajaCallback(req, env) {
   }
 
   const payment = await env.DB.prepare(`
-    SELECT * FROM payment_transactions
+    SELECT *
+    FROM payment_transactions
     WHERE checkout_request_id=?
   `).bind(callback.CheckoutRequestID).first();
 
@@ -600,7 +691,7 @@ async function handle(req, env) {
     return json({
       ok: true,
       service: "GODIA PRIME CONNECT API",
-      version: "2.1",
+      version: "2.2",
       time: nowIso(),
       database: "bound"
     });
@@ -686,11 +777,14 @@ async function handle(req, env) {
 
       const user = await env.DB.prepare(`
         SELECT id,email,phone,full_name,role
-        FROM users WHERE id=?
+        FROM users
+        WHERE id=?
       `).bind(id).first();
 
       if (!user) {
-        console.error("Registration error: inserted user could not be retrieved");
+        console.error(
+          "Registration error: inserted user could not be retrieved"
+        );
 
         return json({
           ok: false,
@@ -746,7 +840,7 @@ async function handle(req, env) {
     }
   }
 
-  /* Phone/email + password login. Supports old and new frontend field names. */
+  /* Phone/email + password login. */
   if (path === "/api/auth/login" && method === "POST") {
     const b = await body(req);
 
@@ -777,7 +871,8 @@ async function handle(req, env) {
     }
 
     const user = await env.DB.prepare(`
-      SELECT * FROM users
+      SELECT *
+      FROM users
       WHERE lower(email)=? OR phone=?
     `).bind(identifier, identifier).first();
 
@@ -836,18 +931,25 @@ async function handle(req, env) {
 
     const query = q
       ? env.DB.prepare(`
-          SELECT id,name,description,category,sku,image_url,unit,price_minor,
-          discount_percent,stock_quantity,supplier_id,updated_at
+          SELECT
+            id,name,description,category,sku,image_url,unit,
+            price_minor,discount_percent,stock_quantity,
+            supplier_id,updated_at
           FROM products
           WHERE is_active=1 AND name LIKE ?
-          ORDER BY updated_at DESC LIMIT 100
+          ORDER BY updated_at DESC
+          LIMIT 100
         `).bind(`%${q}%`)
+
       : env.DB.prepare(`
-          SELECT id,name,description,category,sku,image_url,unit,price_minor,
-          discount_percent,stock_quantity,supplier_id,updated_at
+          SELECT
+            id,name,description,category,sku,image_url,unit,
+            price_minor,discount_percent,stock_quantity,
+            supplier_id,updated_at
           FROM products
           WHERE is_active=1
-          ORDER BY updated_at DESC LIMIT 100
+          ORDER BY updated_at DESC
+          LIMIT 100
         `);
 
     const result = await query.all();
@@ -858,7 +960,7 @@ async function handle(req, env) {
     });
   }
 
-  /* Create order; accept frontend field aliases while retaining the same D1 schema. */
+  /* Create order; retain the existing D1 schema. */
   if (path === "/api/orders" && method === "POST") {
     const user = await auth(req, env);
 
@@ -918,12 +1020,16 @@ async function handle(req, env) {
         }, 400);
       }
 
-      const productId = String(item.productId || item.product_id || "");
+      const productId = String(
+        item.productId || item.product_id || ""
+      );
 
       const product = await env.DB.prepare(`
-        SELECT id,name,supplier_id,price_minor,discount_percent,
-        stock_quantity,is_active
-        FROM products WHERE id=?
+        SELECT
+          id,name,supplier_id,price_minor,discount_percent,
+          stock_quantity,is_active
+        FROM products
+        WHERE id=?
       `).bind(productId).first();
 
       if (!product || !product.is_active) {
@@ -967,8 +1073,10 @@ async function handle(req, env) {
     try {
       await env.DB.prepare(`
         INSERT INTO orders
-        (id,user_id,customer_name,customer_phone,status,payment_status,
-        total_minor,client_order_id,source)
+        (
+          id,user_id,customer_name,customer_phone,status,
+          payment_status,total_minor,client_order_id,source
+        )
         VALUES(?,?,?,?,?,?,?,?,?)
       `).bind(
         orderId,
@@ -985,8 +1093,11 @@ async function handle(req, env) {
       for (const item of normalized) {
         await env.DB.prepare(`
           INSERT INTO order_items
-          (id,order_id,product_id,supplier_id,product_name,variant,
-          quantity,unit_price_minor,discount_percent,line_total_minor)
+          (
+            id,order_id,product_id,supplier_id,product_name,
+            variant,quantity,unit_price_minor,discount_percent,
+            line_total_minor
+          )
           VALUES(?,?,?,?,?,?,?,?,?,?)
         `).bind(
           item.id,
@@ -1028,7 +1139,8 @@ async function handle(req, env) {
       if (clientId) {
         const existing = await env.DB.prepare(`
           SELECT id,status,payment_status,total_minor
-          FROM orders WHERE client_order_id=?
+          FROM orders
+          WHERE client_order_id=?
         `).bind(clientId).first();
 
         if (existing) {
@@ -1062,7 +1174,8 @@ async function handle(req, env) {
       SELECT id,status,payment_status,total_minor,currency,created_at
       FROM orders
       WHERE user_id=?
-      ORDER BY created_at DESC LIMIT 100
+      ORDER BY created_at DESC
+      LIMIT 100
     `).bind(user.id).all();
 
     return json({
@@ -1098,8 +1211,9 @@ async function handle(req, env) {
     }
 
     const payment = await env.DB.prepare(`
-      SELECT id,purpose,plan,amount_kes,status,mpesa_receipt,
-      created_at,updated_at
+      SELECT
+        id,purpose,plan,amount_kes,status,mpesa_receipt,
+        created_at,updated_at
       FROM payment_transactions
       WHERE id=? AND user_id=?
     `).bind(id, user.id).first();
@@ -1140,12 +1254,17 @@ async function handle(req, env) {
     const results = [];
 
     for (const mutation of mutations) {
-      const id = String(mutation.id || uid("mut_")).slice(0, 100);
+      const id = String(
+        mutation.id || uid("mut_")
+      ).slice(0, 100);
 
       try {
         await env.DB.prepare(`
           INSERT OR IGNORE INTO sync_mutations
-          (id,user_id,device_id,mutation_type,entity_id,payload_json,status)
+          (
+            id,user_id,device_id,mutation_type,entity_id,
+            payload_json,status
+          )
           VALUES(?,?,?,?,?,?,?)
         `).bind(
           id,
@@ -1193,132 +1312,653 @@ async function handle(req, env) {
     });
   }
 
+  /* ---------------------------------------------------------
+   * GODIA PRIME POS V2
+   * Uses pos_sales_v2 and pos_sale_items_v2 only.
+   * --------------------------------------------------------- */
 
-  /* GODIA PRIME POS: role-checked, server-priced, stock-safe cashier sales. */
+  const posAllowedRoles = [
+    "owner",
+    "admin",
+    "supplier",
+    "distributor",
+    "retailer",
+    "shopkeeper"
+  ];
+
+  /* POS product list */
   if (path === "/api/pos/products" && method === "GET") {
     const user = await auth(req, env);
-    if (!user) return json({ ok: false, message: "Authentication required" }, 401);
+
+    if (!user) {
+      return json({
+        ok: false,
+        message: "Authentication required"
+      }, 401);
+    }
+
     const role = String(user.role || "").toLowerCase();
-    const allowed = ["owner", "admin", "supplier", "distributor", "retailer", "shopkeeper", "cashier"];
-    if (!allowed.includes(role)) return json({ ok: false, message: "Your account is not authorized to use the cashier POS." }, 403);
-    const query = role === "owner" || role === "admin"
-      ? env.DB.prepare(`SELECT id,name,description,category,sku,image_url,unit,price_minor,discount_percent,stock_quantity,supplier_id FROM products WHERE is_active=1 ORDER BY name LIMIT 500`)
-      : env.DB.prepare(`SELECT id,name,description,category,sku,image_url,unit,price_minor,discount_percent,stock_quantity,supplier_id FROM products WHERE is_active=1 AND supplier_id=? ORDER BY name LIMIT 500`).bind(user.id);
-    const result = await query.all();
-    return json({ ok: true, products: result.results || [] });
+
+    if (!posAllowedRoles.includes(role)) {
+      return json({
+        ok: false,
+        message: "Your account is not authorized to use the cashier POS."
+      }, 403);
+    }
+
+    let result;
+
+    if (role === "owner" || role === "admin") {
+      result = await env.DB.prepare(`
+        SELECT
+          p.id,p.name,p.description,p.category,p.sku,p.image_url,
+          p.unit,p.price_minor,p.discount_percent,p.stock_quantity,
+          p.supplier_id
+        FROM products p
+        WHERE p.is_active=1
+        ORDER BY p.name
+        LIMIT 500
+      `).all();
+
+    } else {
+      result = await env.DB.prepare(`
+        SELECT
+          p.id,p.name,p.description,p.category,p.sku,p.image_url,
+          p.unit,p.price_minor,p.discount_percent,p.stock_quantity,
+          p.supplier_id
+        FROM products p
+        INNER JOIN suppliers sp
+          ON sp.id=p.supplier_id
+        WHERE p.is_active=1
+          AND sp.user_id=?
+        ORDER BY p.name
+        LIMIT 500
+      `).bind(user.id).all();
+    }
+
+    return json({
+      ok: true,
+      products: result.results || []
+    });
   }
 
+  /* Record a POS sale */
   if (path === "/api/pos/sales" && method === "POST") {
     const user = await auth(req, env);
-    if (!user) return json({ ok: false, message: "Authentication required" }, 401);
+
+    if (!user) {
+      return json({
+        ok: false,
+        message: "Authentication required"
+      }, 401);
+    }
+
     const role = String(user.role || "").toLowerCase();
-    const allowed = ["owner", "admin", "supplier", "distributor", "retailer", "shopkeeper", "cashier"];
-    if (!allowed.includes(role)) return json({ ok: false, message: "Your account is not authorized to record POS sales." }, 403);
+
+    if (!posAllowedRoles.includes(role)) {
+      return json({
+        ok: false,
+        message: "Your account is not authorized to record POS sales."
+      }, 403);
+    }
 
     const b = await body(req);
     const rawItems = Array.isArray(b.items) ? b.items : [];
-    if (!rawItems.length || rawItems.length > 100) return json({ ok: false, message: "A sale must contain between 1 and 100 product lines." }, 400);
-    const paymentMethod = String(b.paymentMethod || "").toLowerCase();
-    if (!["cash", "mpesa_till"].includes(paymentMethod)) return json({ ok: false, message: "Choose cash or M-PESA Till payment." }, 400);
 
-    const clientSaleId = String(b.clientSaleId || "").trim().slice(0, 100);
-    if (!clientSaleId) return json({ ok: false, message: "Sale reference is missing. Please try again." }, 400);
-    const prior = await env.DB.prepare(`SELECT id,total_minor,payment_method,payment_status,created_at FROM pos_sales WHERE seller_id=? AND client_sale_id=?`).bind(user.id, clientSaleId).first();
-    if (prior) return json({ ok: true, duplicate: true, sale: prior, message: "This sale was already recorded." });
+    if (!rawItems.length || rawItems.length > 100) {
+      return json({
+        ok: false,
+        message: "A sale must contain between 1 and 100 product lines."
+      }, 400);
+    }
 
-    const customerName = String(b.customerName || "Walk-in customer").trim().slice(0, 150) || "Walk-in customer";
-    let customerPhone = String(b.customerPhone || "").trim();
+    const paymentMethod = String(
+      b.paymentMethod || ""
+    ).toLowerCase();
+
+    if (!["cash", "mpesa_till"].includes(paymentMethod)) {
+      return json({
+        ok: false,
+        message: "Choose cash or M-PESA Till payment."
+      }, 400);
+    }
+
+    const clientSaleId = String(
+      b.clientSaleId || ""
+    ).trim().slice(0, 100);
+
+    if (!clientSaleId) {
+      return json({
+        ok: false,
+        message: "Sale reference is missing. Please try again."
+      }, 400);
+    }
+
+    /* Idempotency check: prevent duplicate sale submissions. */
+    const prior = await env.DB.prepare(`
+      SELECT id
+      FROM pos_sales_v2
+      WHERE seller_id=? AND client_sale_id=?
+    `).bind(user.id, clientSaleId).first();
+
+    if (prior) {
+      const saved = await readPosSale(
+        env.DB,
+        prior.id,
+        user.id
+      );
+
+      return json({
+        ok: true,
+        duplicate: true,
+        sale: saved,
+        message: "This sale was already recorded."
+      });
+    }
+
+    const customerName = String(
+      b.customerName || "Walk-in customer"
+    ).trim().slice(0, 150) || "Walk-in customer";
+
+    let customerPhone = String(
+      b.customerPhone || ""
+    ).trim();
+
     if (customerPhone) {
-      try { customerPhone = normalizeKenyanPhone(customerPhone); }
-      catch (error) { return json({ ok: false, message: error.message }, 400); }
+      try {
+        customerPhone = normalizeKenyanPhone(customerPhone);
+      } catch (error) {
+        return json({
+          ok: false,
+          message: error.message
+        }, 400);
+      }
     }
-    const mpesaReceipt = String(b.mpesaReceipt || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 30) || null;
-    if (paymentMethod === "mpesa_till" && !mpesaReceipt) return json({ ok: false, message: "Enter the M-PESA transaction code. It will be recorded as unverified until checked." }, 400);
 
-    const merged = new Map();
-    for (const line of rawItems) {
-      const productId = String(line.productId || line.product_id || "").trim();
-      const quantity = Number(line.quantity);
-      if (!productId || !Number.isSafeInteger(quantity) || quantity < 1 || quantity > 100000) return json({ ok: false, message: "Each product must have a valid whole-number quantity." }, 400);
-      merged.set(productId, (merged.get(productId) || 0) + quantity);
+    const mpesaReceipt = paymentMethod === "mpesa_till"
+      ? String(b.mpesaReceipt || "")
+          .trim()
+          .toUpperCase()
+          .replace(/[^A-Z0-9]/g, "")
+          .slice(0, 30) || null
+      : null;
+
+    if (paymentMethod === "mpesa_till" && !mpesaReceipt) {
+      return json({
+        ok: false,
+        message: "Enter the M-PESA transaction code. It will be recorded as unverified until checked."
+      }, 400);
     }
-    if (merged.size > 100) return json({ ok: false, message: "Too many different products in one sale." }, 400);
+
+    /* Merge duplicate product lines and validate quantities. */
+    const merged = new Map();
+
+    for (const line of rawItems) {
+      const productId = String(
+        line.productId || line.product_id || ""
+      ).trim();
+
+      const quantity = Number(line.quantity);
+
+      if (
+        !productId ||
+        !Number.isSafeInteger(quantity) ||
+        quantity < 1 ||
+        quantity > 100000
+      ) {
+        return json({
+          ok: false,
+          message: "Each product must have a valid whole-number quantity."
+        }, 400);
+      }
+
+      const combined = (merged.get(productId) || 0) + quantity;
+
+      if (!Number.isSafeInteger(combined) || combined > 100000) {
+        return json({
+          ok: false,
+          message: "Product quantity is outside the supported range."
+        }, 400);
+      }
+
+      merged.set(productId, combined);
+    }
+
+    if (merged.size > 100) {
+      return json({
+        ok: false,
+        message: "Too many different products in one sale."
+      }, 400);
+    }
 
     const items = [];
     let subtotalMinor = 0;
     let totalMinor = 0;
+
     for (const [productId, quantity] of merged) {
-      const product = await env.DB.prepare(`SELECT id,name,sku,supplier_id,price_minor,discount_percent,stock_quantity,is_active FROM products WHERE id=?`).bind(productId).first();
-      if (!product || Number(product.is_active) !== 1) return json({ ok: false, message: "One of the selected products is unavailable." }, 409);
-      if (role !== "owner" && role !== "admin" && String(product.supplier_id || "") !== String(user.id)) return json({ ok: false, message: "You can only sell products assigned to your own business." }, 403);
-      if (quantity > Number(product.stock_quantity || 0)) return json({ ok: false, message: `Not enough stock for ${product.name}. Available: ${Number(product.stock_quantity || 0)}.` }, 409);
+      const product = await env.DB.prepare(`
+        SELECT
+          id,name,sku,supplier_id,price_minor,
+          discount_percent,stock_quantity,is_active
+        FROM products
+        WHERE id=?
+      `).bind(productId).first();
+
+      if (!product || Number(product.is_active) !== 1) {
+        return json({
+          ok: false,
+          message: "One of the selected products is unavailable."
+        }, 409);
+      }
+
+      /* Verify seller ownership through suppliers.user_id. */
+      if (role !== "owner" && role !== "admin") {
+        const ownership = await env.DB.prepare(`
+          SELECT id
+          FROM suppliers
+          WHERE id=? AND user_id=?
+          LIMIT 1
+        `).bind(
+          product.supplier_id,
+          user.id
+        ).first();
+
+        if (!ownership) {
+          return json({
+            ok: false,
+            message: "You can only sell products assigned to your own business."
+          }, 403);
+        }
+      }
+
+      if (quantity > Number(product.stock_quantity || 0)) {
+        return json({
+          ok: false,
+          message: `Not enough stock for ${product.name}. Available: ${Number(product.stock_quantity || 0)}.`
+        }, 409);
+      }
+
       const unit = Number(product.price_minor || 0);
-      if (!Number.isSafeInteger(unit) || unit < 0) return json({ ok: false, message: `Invalid price for ${product.name}.` }, 409);
-      const discount = Math.max(0, Math.min(100, Number(product.discount_percent || 0)));
+
+      if (!Number.isSafeInteger(unit) || unit < 0) {
+        return json({
+          ok: false,
+          message: `Invalid price for ${product.name}.`
+        }, 409);
+      }
+
+      const discount = Math.max(
+        0,
+        Math.min(100, Number(product.discount_percent || 0))
+      );
+
       const lineSubtotal = unit * quantity;
-      const lineTotal = Math.round(lineSubtotal * (1 - discount / 100));
-      if (!Number.isSafeInteger(lineSubtotal) || !Number.isSafeInteger(lineTotal) || lineTotal < 0) return json({ ok: false, message: "Sale total is outside the supported range." }, 400);
+      const lineTotal = Math.round(
+        lineSubtotal * (1 - discount / 100)
+      );
+
+      if (
+        !Number.isSafeInteger(lineSubtotal) ||
+        !Number.isSafeInteger(lineTotal) ||
+        lineTotal < 0
+      ) {
+        return json({
+          ok: false,
+          message: "Sale total is outside the supported range."
+        }, 400);
+      }
+
       subtotalMinor += lineSubtotal;
       totalMinor += lineTotal;
-      items.push({ product, quantity, unit, discount, lineTotal });
-    }
-    if (!Number.isSafeInteger(subtotalMinor) || subtotalMinor < 0 || !Number.isSafeInteger(totalMinor) || totalMinor <= 0) return json({ ok: false, message: "The sale total is outside the supported range or is zero." }, 400);
 
-    const amountReceivedMinor = paymentMethod === "cash" ? Number(b.amountReceivedMinor) : totalMinor;
-    if (!Number.isSafeInteger(amountReceivedMinor) || amountReceivedMinor < totalMinor) return json({ ok: false, message: "Amount received must be equal to or greater than the sale total." }, 400);
-    const changeMinor = paymentMethod === "cash" ? amountReceivedMinor - totalMinor : 0;
-    const paymentStatus = paymentMethod === "cash" ? "paid" : "recorded_unverified";
-    const saleId = uid("pos_");
-    const statements = [env.DB.prepare(`INSERT INTO pos_sales (id,seller_id,cashier_id,client_sale_id,customer_name,customer_phone,subtotal_minor,total_minor,payment_method,payment_status,amount_received_minor,change_minor,mpesa_receipt,status) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).bind(saleId,user.id,user.id,clientSaleId,customerName,customerPhone || null,subtotalMinor,totalMinor,paymentMethod,paymentStatus,amountReceivedMinor,changeMinor,mpesaReceipt,"completed")];
-    for (const item of items) {
-      statements.push(env.DB.prepare(`INSERT INTO pos_sale_items (id,sale_id,product_id,product_name,sku,quantity,unit_price_minor,discount_percent,line_total_minor) VALUES(?,?,?,?,?,?,?,?,?)`).bind(uid("psi_"),saleId,item.product.id,item.product.name,item.product.sku || null,item.quantity,item.unit,item.discount,item.lineTotal));
+      if (
+        !Number.isSafeInteger(subtotalMinor) ||
+        !Number.isSafeInteger(totalMinor)
+      ) {
+        return json({
+          ok: false,
+          message: "Sale total is outside the supported range."
+        }, 400);
+      }
+
+      items.push({
+        product,
+        quantity,
+        unit,
+        discount,
+        lineTotal
+      });
     }
+
+    if (
+      !Number.isSafeInteger(subtotalMinor) ||
+      subtotalMinor < 0 ||
+      !Number.isSafeInteger(totalMinor) ||
+      totalMinor <= 0
+    ) {
+      return json({
+        ok: false,
+        message: "The sale total is outside the supported range or is zero."
+      }, 400);
+    }
+
+    const amountReceivedMinor =
+      paymentMethod === "cash"
+        ? Number(b.amountReceivedMinor)
+        : totalMinor;
+
+    if (
+      !Number.isSafeInteger(amountReceivedMinor) ||
+      amountReceivedMinor < totalMinor
+    ) {
+      return json({
+        ok: false,
+        message: "Amount received must be equal to or greater than the sale total."
+      }, 400);
+    }
+
+    const changeMinor =
+      paymentMethod === "cash"
+        ? amountReceivedMinor - totalMinor
+        : 0;
+
+    const paymentStatus =
+      paymentMethod === "cash"
+        ? "paid"
+        : "recorded_unverified";
+
+    const saleId = uid("pos_");
+
+    /*
+     * D1 batch executes the sale header and all sale lines
+     * as one transaction. The database triggers validate and
+     * deduct stock when the sale lines are inserted.
+     */
+    const statements = [
+      env.DB.prepare(`
+        INSERT INTO pos_sales_v2
+        (
+          id,seller_id,cashier_id,client_sale_id,
+          customer_name,customer_phone,subtotal_minor,total_minor,
+          payment_method,payment_status,amount_received_minor,
+          change_minor,mpesa_receipt,status
+        )
+        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+      `).bind(
+        saleId,
+        user.id,
+        user.id,
+        clientSaleId,
+        customerName,
+        customerPhone || null,
+        subtotalMinor,
+        totalMinor,
+        paymentMethod,
+        paymentStatus,
+        amountReceivedMinor,
+        changeMinor,
+        mpesaReceipt,
+        "completed"
+      )
+    ];
+
+    for (const item of items) {
+      statements.push(
+        env.DB.prepare(`
+          INSERT INTO pos_sale_items_v2
+          (
+            id,sale_id,product_id,product_name,sku,
+            quantity,unit_price_minor,discount_percent,
+            line_total_minor
+          )
+          VALUES(?,?,?,?,?,?,?,?,?)
+        `).bind(
+          uid("psi_"),
+          saleId,
+          item.product.id,
+          item.product.name,
+          item.product.sku || null,
+          item.quantity,
+          item.unit,
+          item.discount,
+          item.lineTotal
+        )
+      );
+    }
+
     try {
       await env.DB.batch(statements);
+
     } catch (error) {
       const msg = String(error?.message || "");
-      if (msg.includes("POS_INSUFFICIENT_STOCK")) return json({ ok: false, message: "Stock changed while this sale was being processed. Refresh the products and try again." }, 409);
-      if (msg.includes("UNIQUE constraint failed") && msg.includes("mpesa_receipt")) return json({ ok: false, message: "This M-PESA receipt code has already been used. Check the Till statement before retrying." }, 409);
-      if (msg.includes("UNIQUE constraint failed")) {
-        const duplicate = await env.DB.prepare(`SELECT id,total_minor,payment_method,payment_status,created_at FROM pos_sales WHERE seller_id=? AND client_sale_id=?`).bind(user.id,clientSaleId).first();
-        if (duplicate) return json({ ok: true, duplicate: true, sale: duplicate, message: "This sale was already recorded." });
+
+      if (
+        msg.includes("POS_INSUFFICIENT_STOCK") ||
+        msg.includes("POS_INSUFFICIENT_STOCK_OR_ACCESS_DENIED")
+      ) {
+        return json({
+          ok: false,
+          message: "Stock changed or product access was denied while this sale was being processed. Refresh the products and try again."
+        }, 409);
       }
-      console.error("POS sale failed:", msg);
-      return json({ ok: false, message: "The sale could not be saved. No receipt was issued; please refresh and check the sales list." }, 500);
+
+      if (
+        msg.includes("UNIQUE constraint failed") &&
+        msg.includes("mpesa_receipt")
+      ) {
+        return json({
+          ok: false,
+          message: "This M-PESA receipt code has already been used. Check the Till statement before retrying."
+        }, 409);
+      }
+
+      if (msg.includes("UNIQUE constraint failed")) {
+        const duplicate = await env.DB.prepare(`
+          SELECT id
+          FROM pos_sales_v2
+          WHERE seller_id=? AND client_sale_id=?
+        `).bind(
+          user.id,
+          clientSaleId
+        ).first();
+
+        if (duplicate) {
+          const saved = await readPosSale(
+            env.DB,
+            duplicate.id,
+            user.id
+          );
+
+          return json({
+            ok: true,
+            duplicate: true,
+            sale: saved,
+            message: "This sale was already recorded."
+          });
+        }
+      }
+
+      console.error("POS V2 sale failed:", msg);
+
+      return json({
+        ok: false,
+        message: "The sale could not be saved. No receipt was issued; please refresh and check the sales list."
+      }, 500);
     }
-    const savedItems = await env.DB.prepare(`SELECT product_name,sku,quantity,unit_price_minor,discount_percent,line_total_minor FROM pos_sale_items WHERE sale_id=? ORDER BY rowid`).bind(saleId).all();
-    return json({ ok: true, sale: { id: saleId, customerName, customerPhone: customerPhone || null, totalMinor, paymentMethod, paymentStatus, amountReceivedMinor, changeMinor, mpesaReceipt, createdAt: nowIso(), items: savedItems.results || [] }, message: paymentMethod === "cash" ? "Cash sale recorded and stock updated." : "M-PESA Till reference recorded. Verify the payment separately before treating it as confirmed." }, 201);
+
+    const saved = await readPosSale(
+      env.DB,
+      saleId,
+      user.id
+    );
+
+    return json({
+      ok: true,
+      sale: saved,
+      message:
+        paymentMethod === "cash"
+          ? "Cash sale recorded and stock updated."
+          : "M-PESA Till reference recorded. Verify the payment separately before treating it as confirmed."
+    }, 201);
   }
 
+  /* POS daily sales report */
   if (path === "/api/pos/sales" && method === "GET") {
     const user = await auth(req, env);
-    if (!user) return json({ ok: false, message: "Authentication required" }, 401);
+
+    if (!user) {
+      return json({
+        ok: false,
+        message: "Authentication required"
+      }, 401);
+    }
+
     const role = String(user.role || "").toLowerCase();
-    const allowed = ["owner", "admin", "supplier", "distributor", "retailer", "shopkeeper", "cashier"];
-    if (!allowed.includes(role)) return json({ ok: false, message: "Your account is not authorized to view POS reports." }, 403);
-    const date = String(url.searchParams.get("date") || new Date().toISOString().slice(0,10));
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return json({ ok: false, message: "Use a date in YYYY-MM-DD format." }, 400);
-    const ownerScope = role === "owner" || role === "admin";
-    const scopeSql = ownerScope ? "date(datetime(created_at,'+3 hours'))=?" : "seller_id=? AND date(datetime(created_at,'+3 hours'))=?";
-    const summary = await env.DB.prepare(`SELECT COUNT(*) AS sale_count,COALESCE(SUM(CASE WHEN payment_method='cash' THEN total_minor ELSE 0 END),0) AS cash_total_minor,COALESCE(SUM(CASE WHEN payment_method='mpesa_till' THEN total_minor ELSE 0 END),0) AS mpesa_till_total_minor,COALESCE(SUM(total_minor),0) AS daily_total_minor FROM pos_sales WHERE ${scopeSql} AND status='completed'`).bind(...(ownerScope ? [date] : [user.id,date])).first();
-    const sales = await env.DB.prepare(`SELECT id,customer_name,customer_phone,total_minor,payment_method,payment_status,amount_received_minor,change_minor,mpesa_receipt,created_at FROM pos_sales WHERE ${scopeSql} AND status='completed' ORDER BY created_at DESC LIMIT 200`).bind(...(ownerScope ? [date] : [user.id,date])).all();
-    return json({ ok: true, date, summary: summary || {}, sales: sales.results || [], currency: "KES", timezone: "Africa/Nairobi" });
+
+    if (!posAllowedRoles.includes(role)) {
+      return json({
+        ok: false,
+        message: "Your account is not authorized to view POS reports."
+      }, 403);
+    }
+
+    const date = String(
+      url.searchParams.get("date") ||
+      new Date().toLocaleDateString("en-CA", {
+        timeZone: "Africa/Nairobi"
+      })
+    );
+
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      return json({
+        ok: false,
+        message: "Use a date in YYYY-MM-DD format."
+      }, 400);
+    }
+
+    const ownerScope =
+      role === "owner" || role === "admin";
+
+    const scopeSql = ownerScope
+      ? "date(datetime(created_at,'+3 hours'))=?"
+      : "seller_id=? AND date(datetime(created_at,'+3 hours'))=?";
+
+    const parameters = ownerScope
+      ? [date]
+      : [user.id, date];
+
+    const summary = await env.DB.prepare(`
+      SELECT
+        COUNT(*) AS sale_count,
+        COALESCE(
+          SUM(
+            CASE
+              WHEN payment_method='cash'
+              THEN total_minor
+              ELSE 0
+            END
+          ),0
+        ) AS cash_total_minor,
+        COALESCE(
+          SUM(
+            CASE
+              WHEN payment_method='mpesa_till'
+              THEN total_minor
+              ELSE 0
+            END
+          ),0
+        ) AS mpesa_till_total_minor,
+        COALESCE(SUM(total_minor),0) AS daily_total_minor
+      FROM pos_sales_v2
+      WHERE ${scopeSql}
+        AND status='completed'
+    `).bind(...parameters).first();
+
+    const sales = await env.DB.prepare(`
+      SELECT
+        id,customer_name,customer_phone,total_minor,
+        payment_method,payment_status,amount_received_minor,
+        change_minor,mpesa_receipt,created_at
+      FROM pos_sales_v2
+      WHERE ${scopeSql}
+        AND status='completed'
+      ORDER BY created_at DESC
+      LIMIT 200
+    `).bind(...parameters).all();
+
+    return json({
+      ok: true,
+      date,
+      summary: summary || {},
+      sales: sales.results || [],
+      currency: "KES",
+      timezone: "Africa/Nairobi"
+    });
   }
 
-  if (path.startsWith("/api/pos/sales/") && method === "GET") {
+  /* POS receipt lookup */
+  if (
+    path.startsWith("/api/pos/sales/") &&
+    method === "GET"
+  ) {
     const user = await auth(req, env);
-    if (!user) return json({ ok: false, message: "Authentication required" }, 401);
+
+    if (!user) {
+      return json({
+        ok: false,
+        message: "Authentication required"
+      }, 401);
+    }
+
     const role = String(user.role || "").toLowerCase();
-    const allowed = ["owner", "admin", "supplier", "distributor", "retailer", "shopkeeper", "cashier"];
-    if (!allowed.includes(role)) return json({ ok: false, message: "Your account is not authorized to view POS receipts." }, 403);
-    const saleId = decodeURIComponent(path.slice("/api/pos/sales/".length));
-    const ownerScope = role === "owner" || role === "admin";
-    const sale = ownerScope
-      ? await env.DB.prepare(`SELECT * FROM pos_sales WHERE id=?`).bind(saleId).first()
-      : await env.DB.prepare(`SELECT * FROM pos_sales WHERE id=? AND seller_id=?`).bind(saleId,user.id).first();
-    if (!sale) return json({ ok: false, message: "Receipt not found." }, 404);
-    const items = await env.DB.prepare(`SELECT product_name,sku,quantity,unit_price_minor,discount_percent,line_total_minor FROM pos_sale_items WHERE sale_id=? ORDER BY rowid`).bind(saleId).all();
-    return json({ ok: true, sale: { ...sale, items: items.results || [] } });
+
+    if (!posAllowedRoles.includes(role)) {
+      return json({
+        ok: false,
+        message: "Your account is not authorized to view POS receipts."
+      }, 403);
+    }
+
+    let saleId;
+
+    try {
+      saleId = decodeURIComponent(
+        path.slice("/api/pos/sales/".length)
+      );
+    } catch {
+      return json({
+        ok: false,
+        message: "Invalid receipt reference."
+      }, 400);
+    }
+
+    if (!saleId || saleId.includes("/")) {
+      return json({
+        ok: false,
+        message: "Invalid receipt reference."
+      }, 400);
+    }
+
+    const ownerScope =
+      role === "owner" || role === "admin";
+
+    const sale = await readPosSale(
+      env.DB,
+      saleId,
+      ownerScope ? null : user.id
+    );
+
+    if (!sale) {
+      return json({
+        ok: false,
+        message: "Receipt not found."
+      }, 404);
+    }
+
+    return json({
+      ok: true,
+      sale
+    });
   }
 
   if (path === "/api/me" && method === "GET") {
@@ -1326,7 +1966,10 @@ async function handle(req, env) {
 
     return user
       ? json({ ok: true, user })
-      : json({ ok: false, message: "Authentication required" }, 401);
+      : json({
+          ok: false,
+          message: "Authentication required"
+        }, 401);
   }
 
   return json({
