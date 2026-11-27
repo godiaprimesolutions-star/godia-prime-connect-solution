@@ -39,18 +39,9 @@ tailwind.config={theme:{extend:{colors:{navy:'#0A1F44',emerald:'#0E7A4D',green2:
 <main class="content">
 <section id="login" class="page">
  <div class="max-w-md mx-auto card p-7 mt-5"><div class="text-center mb-6"><div class="w-14 h-14 rounded-2xl mx-auto flex items-center justify-center text-3xl font-black" style="background:#E9B44C;color:#0A1F44">G</div><h1 class="text-2xl font-black mt-4" style="color:#0A1F44">Welcome back</h1><p class="muted text-sm mt-1">Sign in to your GODIA PRIME account</p></div>
- <label class="text-sm font-bold" for="loginPhone">Phone number</label>
- <input id="loginPhone" type="tel" inputmode="tel" class="field mt-2 mb-4" autocomplete="tel" placeholder="07XX XXX XXX" aria-describedby="loginPhoneHelp">
- <p id="loginPhoneHelp" class="text-xs muted -mt-2 mb-4">Use the phone number registered with your account.</p>
- <label class="text-sm font-bold" for="loginPassword">PIN / Password</label>
- <div class="relative mt-2">
-  <input id="loginPassword" type="password" inputmode="numeric" class="field pr-20" autocomplete="current-password" placeholder="Enter your PIN" aria-describedby="loginPinHelp">
-  <button type="button" class="absolute right-2 top-1/2 -translate-y-1/2 px-3 text-sm font-bold" style="color:#0E7A4D;min-height:38px" id="togglePinBtn" onclick="togglePinVisibility()" aria-label="Show PIN">Show</button>
- </div>
- <p id="loginPinHelp" class="text-xs muted mt-2">Enter the PIN or password already set up for your account.</p>
+ <label class="text-sm font-bold">Phone number</label><input id="loginPhone" class="field mt-2 mb-4" autocomplete="tel" placeholder="07XX XXX XXX">
+ <label class="text-sm font-bold">Password / PIN</label><input id="loginPassword" type="password" class="field mt-2" autocomplete="current-password" placeholder="Your password">
  <button class="btn primary w-full mt-5" id="loginBtn" onclick="login()">Login securely</button>
- <div class="flex items-center gap-3 my-5"><span class="h-px bg-slate-200 flex-1"></span><span class="text-xs muted font-bold">OR</span><span class="h-px bg-slate-200 flex-1"></span></div>
-
  <div class="text-center text-sm mt-5">New to GODIA PRIME? <button class="font-bold" style="color:#0E7A4D" onclick="go('register')">Create account</button></div>
  
  </div>
@@ -179,15 +170,15 @@ async function placeOrder(){
  if(!token){notify('Sign in before placing an order.');go('login');return}
  const name=$('deliveryName').value.trim(),phone=$('deliveryPhone').value.trim();
  if(!name||!phone){notify('Enter the recipient name and phone number.');return}
- const items=cartEntries().map(({p,q})=>({product_id:p.id,quantity:q}));
+ const items=cartEntries().map(({p,q})=>({productId:p.id,quantity:q}));
  if(!items.length){notify('Your cart is empty.');return}
  const btn=$('placeOrderBtn');btn.disabled=true;btn.textContent='Submitting…';
  try{
-  const data=await api('/api/orders',{method:'POST',body:JSON.stringify({items,customer_name:name,customer_phone:phone,client_order_id:crypto.randomUUID()})});
+  const data=await api('/api/orders',{method:'POST',body:JSON.stringify({items,customerName:name,customerPhone:phone,clientOrderId:crypto.randomUUID()})});
   lastOrder=data.order||data.data||data;
-  const orderId=lastOrder.id||lastOrder.order_id||'Recorded';
+  const orderId=lastOrder.orderId||lastOrder.id||lastOrder.order_id||'Recorded';
   $('orderNumber').textContent=orderId;
-  $('confirmedTotal').textContent=lastOrder.total_minor!=null?moneyMinor(lastOrder.total_minor):'Total confirmed by server';
+  $('confirmedTotal').textContent=(lastOrder.totalMinor!=null?moneyMinor(lastOrder.totalMinor):((lastOrder.totalMinor!=null?moneyMinor(lastOrder.totalMinor):(lastOrder.total_minor!=null?moneyMinor(lastOrder.total_minor):'Total confirmed by server'))));
   cart={};saveCart();$('deliveryName').value='';$('deliveryPhone').value='';
   go('confirmation');notify('Order accepted. Payment has not been collected.');
  }catch(e){notify(e.message)}
@@ -204,21 +195,12 @@ async function loadOrders(){
 async function showOrder(id){
  try{const data=await api('/api/orders');const list=Array.isArray(data.orders)?data.orders:(Array.isArray(data.data)?data.data:[]);const o=list.find(x=>String(x.id)===String(id));if(!o){notify('Order not found in your account.');return}lastOrder=o;$('trackingContent').innerHTML=`<p><b>Order:</b> ${escapeHtml(o.id)}</p><p class="mt-2"><b>Status:</b> ${escapeHtml(o.status||'pending')}</p><p class="mt-2"><b>Payment:</b> ${escapeHtml(o.payment_status||'not_paid')}</p><p class="mt-2"><b>Total:</b> ${o.total_minor!=null?moneyMinor(o.total_minor):'Not supplied'}</p>`;go('tracking')}catch(e){notify(e.message)}
 }
-function togglePinVisibility(){
- const field=$('loginPassword'),button=$('togglePinBtn');
- if(!field||!button)return;
- const showing=field.type==='text';
- field.type=showing?'password':'text';
- button.textContent=showing?'Show':'Hide';
- button.setAttribute('aria-label',showing?'Show PIN':'Hide PIN');
-}
-
 async function login(){
  const phone=$('loginPhone').value.trim(),password=$('loginPassword').value;
  if(!phone||!password){notify('Enter your phone number and password.');return}
  const btn=$('loginBtn');btn.disabled=true;btn.textContent='Signing in…';
  try{
-  const data=await api('/api/auth/login',{method:'POST',body:JSON.stringify({phone,password})});
+  const data=await api('/api/auth/login',{method:'POST',body:JSON.stringify({identifier:phone,secret:password})});
   if(!data.token)throw new Error('The server did not return a login token.');
   token=data.token;localStorage.setItem(TOKEN_KEY,token);me=data.user||null;
   if(!await loadMe())throw new Error('Your session could not be verified. Please sign in again.');
@@ -230,7 +212,7 @@ async function register(){
  const full_name=$('regName').value.trim(),phone=$('regPhone').value.trim(),email=$('regEmail').value.trim(),password=$('regPassword').value;
  if(!full_name||!phone||!email||password.length<8){notify('Enter all details and use a password of at least 8 characters.');return}
  try{
-  await api('/api/auth/register',{method:'POST',body:JSON.stringify({full_name,phone,email,password})});
+  await api('/api/auth/register',{method:'POST',body:JSON.stringify({fullName:full_name,phone,email,password})});
   notify('Account created. Please sign in.');$('loginPhone').value=phone;go('login');
  }catch(e){notify(e.message)}
 }
