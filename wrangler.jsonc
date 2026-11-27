@@ -1,24 +1,15 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "godia-prime-connect-api",
-  "main": "src/index.js",
+  "name": "godia-prime-connect-solution",
   "compatibility_date": "2026-11-26",
-  "workers_dev": true,
+  "main": "src/index.js",
   "assets": {
-    "directory": ".",
-    "binding": "ASSETS",
-    "not_found_handling": "single-page-application"
+    "directory": "./public"
   },
   "d1_databases": [
     {
       "binding": "DB",
       "database_name": "godia-prime-db",
-      "database_id": "REPLACE_WITH_YOUR_NEW_D1_DATABASE_ID",
-      "migrations_dir": "migrations"
+      "database_id": "812b9156-713c-429d-ad2a-41d30be8e283"
     }
-  ],
-  "vars": {
-    "APP_NAME": "GODIA PRIME CONNECT",
-    "GOOGLE_CLIENT_ID": "SET_IN_CLOUDFLARE_DASHBOARD_OR_WRANGLER_SECRET"
-  }
+  ]
 }
